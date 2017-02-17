@@ -1,6 +1,6 @@
 {
   "name": "knockknock",
-  "version": "0.1.0alpha",
+  "version": "0.1.0",
   "description": "Who's there? The module that just called your code",
   "homepage": "https://github.com/Skelp/knockknock",
   "bugs": {
@@ -37,7 +37,7 @@
     "istanbul": "^0.4.5",
     "mocha": "^3.2.0",
     "ncp": "^2.0.0",
-    "tmp": "0.0.31"
+    "tmp": "^0.0.31"
   },
   "main": "src/knockknock.js",
   "scripts": {
