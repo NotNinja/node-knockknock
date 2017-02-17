@@ -1,0 +1,6 @@
+{
+  "name": "single",
+  "version": "4.0.1",
+  "main": "src/single.js",
+  "private": true
+}

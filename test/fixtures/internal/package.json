@@ -1,0 +1,6 @@
+{
+  "name": "internal",
+  "version": "2.0.1",
+  "main": "./src/internal",
+  "private": true
+}

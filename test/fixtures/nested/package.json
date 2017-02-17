@@ -1,0 +1,6 @@
+{
+  "name": "nested",
+  "version": "3.0.1",
+  "main": "src/nested.js",
+  "private": true
+}

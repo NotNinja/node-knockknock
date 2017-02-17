@@ -1,0 +1,6 @@
+{
+  "name": "flat",
+  "version": "1.0.1",
+  "main": "src/flat.js",
+  "private": true
+}
