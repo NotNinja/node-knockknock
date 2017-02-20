@@ -70,7 +70,7 @@ The `options` parameter is entirely optional and supports the following:
 | Option           | Description                                                                                                                               | Default Value |
 | ---------------- | ----------------------------------------------------------------------------------------------------------------------------------------- | ------------- |
 | `excludes`       | The name(s) of packages whose calls should be ignored. Internal calls from KnockKnock and Node.js are always ignored.                     | `[]`          |
-| `filterFiles` | A function called to filter files based on their path. Only called for files whose containing package (if any) is also included.             | N/A           |
+| `filterFiles`    | A function called to filter files based on their path. Only called for files whose containing package (if any) is also included.          | N/A           |
 | `filterPackages` | A function called to filter files based on the package to which they belong (if any). Only called if package is not listed in `excludes`. | N/A           |
 
 In most cases you'll want to at least exclude your own package so that your own internal calls are ignored via
