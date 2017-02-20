@@ -30,12 +30,12 @@ const pkgDir = require('pkg-dir')
 const version = require('../package.json').version
 
 /**
- * A cache containing package descriptors mapped to file paths.
+ * A cache containing packages mapped to file paths.
  *
  * The intension of this cache is to speed up package lookups for repeat callers by avoiding file system traversal.
  *
  * @private
- * @type {Map.<string, knockknock~PackageDescriptor>}
+ * @type {Map.<string, knockknock~Package>}
  */
 const packageCache = new Map()
 
@@ -47,23 +47,23 @@ const packageCache = new Map()
 class Finder {
 
   /**
-   * Combines the caller information by merging the specified <code>filePath</code> into the <code>descriptor</code>
-   * provided and extracting further information from the given stack <code>frame</code>.
+   * Generates the caller information by combining the specified <code>filePath</code> with the <code>pkg</code> and
+   * stack <code>frame</code> information provided.
    *
-   * @param {knockknock~PackageDescriptor} descriptor - the descriptor for the caller's package
    * @param {string} filePath - the path of the caller file
+   * @param {knockknock~Package} pkg - the information for the caller's package
    * @param {CallSite} frame - the current stack frame
    * @return {knockknock~Caller} The combined caller information.
    * @private
    * @static
    */
-  static _buildCaller(descriptor, filePath, frame) {
+  static _buildCaller(filePath, pkg, frame) {
     return {
       column: frame.getColumnNumber(),
       file: filePath,
       line: frame.getLineNumber(),
       name: frame.getFunctionName() || '<anonymous>',
-      package: descriptor ? Object.assign({}, descriptor) : null
+      package: pkg ? Object.assign({}, pkg) : null
     }
   }
 
@@ -106,28 +106,28 @@ class Finder {
   }
 
   /**
-   * Returns a descriptor for the package installed at the specified directory path.
+   * Returns the information for the package installed at the specified directory path.
    *
-   * The descriptor simply contains <code>dirPath</code> as well as the <code>name</code>, <code>version</code>, and
+   * This information contains <code>dirPath</code> as well as the <code>name</code>, <code>version</code>, and the
    * <code>main</code> file (absolute) read from the <code>package.json</code> file.
    *
-   * @param {string} dirPath - the path of the installation directory for the package whose descriptor is to be returned
-   * @return {knockknock~PackageDescriptor} The descriptor for the package installed within <code>dirPath</code>.
+   * @param {string} dirPath - the path of the installation directory for the package whose information is to be
+   * returned
+   * @return {knockknock~Package} The information for the package installed within <code>dirPath</code>.
    * @private
    * @static
    */
-  static _getPackageDescriptor(dirPath) {
+  static _getPackage(dirPath) {
     debug('Attempting to retrieve information for package installed in directory: %s', dirPath)
 
     const pkg = require(path.join(dirPath, 'package.json'))
-    const descriptor = {
+
+    return {
       directory: dirPath,
       main: pkg.main ? path.join(dirPath, pkg.main) : null,
       name: pkg.name,
       version: pkg.version
     }
-
-    return descriptor
   }
 
   /**
@@ -167,7 +167,10 @@ class Finder {
       excludes = excludes.concat(options.excludes)
     }
 
-    return { excludes }
+    return {
+      excludes,
+      filterPackages: options.filterPackages
+    }
   }
 
   /**
@@ -194,20 +197,31 @@ class Finder {
     this._stack = getStack().slice(3)
 
     /**
-     * Whether package directory searches initiated by this {@link Finder} should be made synchronously.
-     *
-     * @private
-     * @type {boolean}
-     */
-    this._sync = sync
-
-    /**
      * The parsed options for this {@link Finder}.
      *
      * @private
      * @type {knockknock~Options}
      */
     this._options = Finder._parseOptions(options)
+
+    /**
+     * Contains the results of calling the <code>filterPackages</code> option for individual packages.
+     *
+     * The intension of this map is to ensure that <code>filterPackages</code> is only called once per package
+     * installation.
+     *
+     * @private
+     * @type {Map.<knockknock~Package, boolean>}
+     */
+    this._filteredPackages = new Map()
+
+    /**
+     * Whether package directory searches initiated by this {@link Finder} should be made synchronously.
+     *
+     * @private
+     * @type {boolean}
+     */
+    this._sync = sync
   }
 
   /**
@@ -242,57 +256,91 @@ class Finder {
     }
 
     if (packageCache.has(filePath)) {
-      return this._handlePackageDescriptor(packageCache.get(filePath), filePath, frame)
+      return this._handlePackage(packageCache.get(filePath), filePath, frame)
     }
 
     debug('Attempting to find installation directory for package containing file: %s', filePath)
 
     const packageDirFinder = Finder[this._sync ? '_findPackageDirectorySync' : '_findPackageDirectory']
     return packageDirFinder(filePath, (dirPath) => {
-      const descriptor = dirPath != null ? Finder._getPackageDescriptor(dirPath) : null
+      const pkg = dirPath != null ? Finder._getPackage(dirPath) : null
 
-      return this._handlePackageDescriptor(descriptor, filePath, frame)
+      packageCache.set(filePath, pkg)
+
+      return this._handlePackage(pkg, filePath, frame)
     })
   }
 
   /**
-   * Handles the specified <code>descriptor</code> of the package containing the <code>filePath</code> provided.
+   * Handles the specified package containing the <code>filePath</code> provided.
    *
-   * <code>descriptor</code> will be <code>null</code> if no parent package could be found for <code>filePath</code>, in
-   * which case this method will return the caller information without the package information.
+   * <code>pkg</code> will be <code>null</code> if no parent package could be found for <code>filePath</code>, in which
+   * case this method will return the caller information without the package information.
    *
-   * If <code>descriptor</code> is for an excluded package, this method will call {@link Finder#findNext} to try and
-   * find the information for the next caller and, as such, shares the same return values. Otherwise, this method will
-   * return the caller information complete with details on the containing package.
+   * If <code>pkg</code> has been excluded, this method will call {@link Finder#findNext} to try and find the
+   * information for the next caller and, as such, shares the same return values. Otherwise, this method will return the
+   * caller information complete with details on the containing package.
    *
    * The given stack <code>frame</code> is used to build the caller information, where necessary.
    *
-   * @param {?knockknock~PackageDescriptor} descriptor - the descriptor for the package responsible for the current call
-   * in the stack (may be <code>null</code> if none could be found)
+   * @param {?knockknock~Package} pkg - the information for the package responsible for the current call in the stack
+   * (may be <code>null</code> if none could be found)
    * @param {string} filePath - the path of the file responsible for the current call in the stack
    * @param {CallSite} frame - the current stack frame
    * @return {?knockknock~Caller|Promise.<Error, knockknock~Caller>} The caller information (or a <code>Promise</code>
    * resolved with it when asynchronous) or <code>null</code> if there are no more frames in the call stack.
    * @private
    */
-  _handlePackageDescriptor(descriptor, filePath, frame) {
-    packageCache.set(filePath, descriptor)
-
-    if (descriptor == null) {
+  _handlePackage(pkg, filePath, frame) {
+    if (pkg == null) {
       debug('Unable to find package containing file: %s', filePath)
 
-      return Finder._buildCaller(null, filePath, frame)
+      return Finder._buildCaller(filePath, null, frame)
     }
 
-    debug('Found package "%s" containing file: %s', descriptor.name, filePath)
+    debug('Found package "%s" containing file: %s', pkg.name, filePath)
 
-    if (this._options.excludes.indexOf(descriptor.name) >= 0) {
-      debug('Skipping call from excluded package: %s', descriptor.name)
+    if (!this._isIncluded(filePath, pkg)) {
+      debug('Excluding call within package "%s" from file: %s', pkg.name, filePath)
 
       return this.findNext()
     }
 
-    return Finder._buildCaller(descriptor, filePath, frame)
+    return Finder._buildCaller(filePath, pkg, frame)
+  }
+
+  /**
+   * Returns whether the call from the specified <code>filePath</code> within the <code>pkg</code> provided should be
+   * included.
+   *
+   * This is determined based on the runtime options that were passed in.
+   *
+   * @param {string} filePath - the path of the file responsible for the current call in the stack
+   * @param {?knockknock~Package} pkg - the information for the package responsible for the current call in the stack
+   * (may be <code>null</code> if none could be found)
+   * @return {boolean} <code>true</code> if the call from <code>filePath</code> should be included; otherwise
+   * <code>false</code>.
+   * @private
+   */
+  _isIncluded(filePath, pkg) {
+    // TODO: #7 Only perform this check when pkg is not null
+    if (this._options.excludes.indexOf(pkg.name) >= 0) {
+      return false
+    }
+
+    if (this._filteredPackages.has(pkg)) {
+      return this._filteredPackages.get(pkg)
+    }
+
+    if (this._options.filterPackages) {
+      const included = this._options.filterPackages(Object.assign({}, pkg))
+
+      this._filteredPackages.set(pkg, included)
+
+      return included
+    }
+
+    return true
   }
 
 }
@@ -320,8 +368,8 @@ module.exports = function whoIsThere(options) {
 }
 
 /**
- * Clears the cache containing package descriptors mapped to file paths which is used to speed up package lookups for
- * repeat callers by avoiding file system traversal.
+ * Clears the cache containing packages mapped to file paths which is used to speed up package lookups for repeat
+ * callers by avoiding file system traversal.
  *
  * @return {void}
  * @protected
@@ -361,6 +409,20 @@ module.exports.sync = function whoIsThereSync(options) {
  * @type {string}
  */
 module.exports.version = version
+
+/**
+ * Called with the information for the package containing the current file that is being processed to allow consumers to
+ * make a decision on whether files within the specified package are to be included.
+ *
+ * If the current file being processed does not belong to a package, then the decision returned will apply to <b>all</b>
+ * unpackaged files.
+ *
+ * @callback knockknock~FilterPackagesCallback
+ * @param {?knockknock~Package} pkg - the package information for the current file being processed (may be
+ * <code>null</code> if no package was found)
+ * @return {boolean} <code>true</code> to include files within the package (or all unpackaged files, if <code>pkg</code>
+ * is <code>null</code>); otherwise <code>false</code>.
+ */
 
 /**
  * Called with the installation directory of a package containing the calling file.
@@ -403,4 +465,7 @@ module.exports.version = version
  * @typedef {Object} knockknock~Options
  * @property {string|string[]} [excludes] - The names of packages whose calls should be ignored when trying to find the
  * caller.
+ * @property {knockknock~FilterPackagesCallback} [filterPackages] - A function to be called to filter files based on the
+ * package to which they belong (if any). This is only called for packages whose names are not listed in
+ * <code>excludes</code>.
  */

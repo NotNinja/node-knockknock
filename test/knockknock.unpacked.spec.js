@@ -74,6 +74,8 @@ describe('knockknock:fixture:unpackaged', () => {
           })
         })
     })
+
+    // TODO: #7 Add test covering use of "filterPackages" for unpackaged file
   })
 
   context('when synchronous', () => {
@@ -90,5 +92,7 @@ describe('knockknock:fixture:unpackaged', () => {
         package: null
       })
     })
+
+    // TODO: #7 Add test covering use of "filterPackages" for unpackaged file
   })
 })

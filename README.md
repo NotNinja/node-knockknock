@@ -67,11 +67,13 @@ If no caller can be determined (or all belong to excluded packages), then the `P
 
 The `options` parameter is entirely optional and supports the following:
 
-| Option     | Description                                                                                                           |
-| ---------- | --------------------------------------------------------------------------------------------------------------------- |
-| `excludes` | The name(s) of packages whose calls should be ignored. Internal calls from KnockKnock and Node.js are always ignored. |
+| Option           | Description                                                                                                           | Default Value |
+| ---------------- | --------------------------------------------------------------------------------------------------------------------- | ------------- |
+| `excludes`       | The name(s) of packages whose calls should be ignored. Internal calls from KnockKnock and Node.js are always ignored. | `[]`          |
+| `filterPackages` | A function called to filter files based on the package to which they belong (if any).                                 | N/A           |
 
-In most cases you'll want to at least exclude your own package so that your own internal calls are ignored.
+In most cases you'll want to at least exclude your own package so that your own internal calls are ignored via
+`excludes` or `filterPackages`.
 
 ``` javascript
 const whoIsThere = require('knockknock')
@@ -84,7 +86,7 @@ module.exports = function() {
 
         // ...
       } else {
-        console.log(`Module was called from file: ${caller.file}`)
+        console.log(`Module was called from file "${caller.file}" in package "${caller.package ? caller.package.name : '<unknown>'}"`)
 
         // ...
       }
@@ -107,7 +109,7 @@ module.exports = function() {
 
     // ...
   } else {
-    console.log(`Module was called from file: ${caller.file}`)
+    console.log(`Module was called from file "${caller.file}" in package "${caller.package ? caller.package.name : '<unknown>'}"`)
 
     // ...
   }

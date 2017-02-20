@@ -50,9 +50,18 @@ describe('knockknock:fixture:internal', () => {
         })
     })
 
-    context('and package is excluded', () => {
+    context('and package is excluded via "excludes"', () => {
       it('should return promise for null', () => {
         return internal(helpers.createOptions({ excludes: 'internal' }))
+          .then((caller) => {
+            expect(caller).to.be.null
+          })
+      })
+    })
+
+    context('and package is excluded via "filterPackages"', () => {
+      it('should return promise for null', () => {
+        return internal(helpers.createOptions({ filterPackages: (pkg) => pkg.name !== 'internal' }))
           .then((caller) => {
             expect(caller).to.be.null
           })
@@ -80,9 +89,17 @@ describe('knockknock:fixture:internal', () => {
       }))
     })
 
-    context('and package is excluded', () => {
+    context('and package is excluded via "excludes"', () => {
       it('should return null', () => {
         const caller = internal.sync(helpers.createOptions({ excludes: 'internal' }))
+
+        expect(caller).to.be.null
+      })
+    })
+
+    context('and package is excluded via "filterPackages"', () => {
+      it('should return null', () => {
+        const caller = internal.sync(helpers.createOptions({ filterPackages: (pkg) => pkg.name !== 'internal' }))
 
         expect(caller).to.be.null
       })

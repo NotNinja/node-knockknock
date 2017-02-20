@@ -50,9 +50,18 @@ describe('knockknock:fixture:server', () => {
         })
     })
 
-    context('and package is excluded', () => {
+    context('and package is excluded via "excludes"', () => {
       it('should return promise for null', () => {
         return server(helpers.createOptions({ excludes: 'server' }))
+          .then((caller) => {
+            expect(caller).to.be.null
+          })
+      })
+    })
+
+    context('and package is excluded via "filterPackages"', () => {
+      it('should return promise for null', () => {
+        return server(helpers.createOptions({ filterPackages: (pkg) => pkg.name !== 'server' }))
           .then((caller) => {
             expect(caller).to.be.null
           })
@@ -80,9 +89,17 @@ describe('knockknock:fixture:server', () => {
       }))
     })
 
-    context('and package is excluded', () => {
+    context('and package is excluded via "excludes"', () => {
       it('should return null', () => {
         const caller = server.sync(helpers.createOptions({ excludes: 'server' }))
+
+        expect(caller).to.be.null
+      })
+    })
+
+    context('and package is excluded via "filterPackages"', () => {
+      it('should return null', () => {
+        const caller = server.sync(helpers.createOptions({ filterPackages: (pkg) => pkg.name !== 'server' }))
 
         expect(caller).to.be.null
       })

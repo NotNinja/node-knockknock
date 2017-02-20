@@ -38,12 +38,9 @@ exports.createOptions = function createOptions(options) {
     options = {}
   }
 
-  let excludes = [ 'mocha' ]
-  if (options.excludes) {
-    excludes = excludes.concat(options.excludes)
-  }
+  options.excludes = [ 'mocha' ].concat(options.excludes || [])
 
-  return { excludes }
+  return options
 }
 
 /**

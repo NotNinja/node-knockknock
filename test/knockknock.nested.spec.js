@@ -51,9 +51,18 @@ describe('knockknock:fixture:nested', () => {
           })
       })
 
-      context('and package is excluded', () => {
+      context('and package is excluded via "excludes"', () => {
         it('should return promise for null', () => {
           return nested.foo(helpers.createOptions({ excludes: 'nested' }))
+            .then((caller) => {
+              expect(caller).to.be.null
+            })
+        })
+      })
+
+      context('and package is excluded via "filterPackages"', () => {
+        it('should return promise for null', () => {
+          return nested.foo(helpers.createOptions({ filterPackages: (pkg) => pkg.name !== 'nested' }))
             .then((caller) => {
               expect(caller).to.be.null
             })
@@ -80,7 +89,7 @@ describe('knockknock:fixture:nested', () => {
           })
       })
 
-      context('and "knocking" package is excluded', () => {
+      context('and "knocking" package is excluded via "excludes"', () => {
         it('should return promise for caller & package information for fixture file', () => {
           return nested.bar(helpers.createOptions({ excludes: 'bar' }))
             .then((caller) => {
@@ -100,7 +109,27 @@ describe('knockknock:fixture:nested', () => {
         })
       })
 
-      context('and package is excluded', () => {
+      context('and "knocking" package is excluded via "filterPackages"', () => {
+        it('should return promise for caller & package information for fixture file', () => {
+          return nested.bar(helpers.createOptions({ filterPackages: (pkg) => pkg.name !== 'bar' }))
+            .then((caller) => {
+              expect(caller).to.deep.equal(helpers.resolveCallerForFixture({
+                column: 10,
+                file: 'nested/src/nested.js',
+                line: 29,
+                name: 'nestedBarFunction',
+                package: {
+                  directory: 'nested',
+                  main: 'nested/src/nested.js',
+                  name: 'nested',
+                  version: '3.0.1'
+                }
+              }))
+            })
+        })
+      })
+
+      context('and package is excluded via "excludes"', () => {
         it('should return promise for caller & package information for indirect fixture file', () => {
           return nested.bar(helpers.createOptions({ excludes: 'nested' }))
             .then((caller) => {
@@ -120,9 +149,42 @@ describe('knockknock:fixture:nested', () => {
         })
       })
 
-      context('and both package and "knocking" package are excluded', () => {
+      context('and package is excluded via "filterPackages"', () => {
+        it('should return promise for caller & package information for indirect fixture file', () => {
+          return nested.bar(helpers.createOptions({ filterPackages: (pkg) => pkg.name !== 'nested' }))
+            .then((caller) => {
+              expect(caller).to.deep.equal(helpers.resolveCallerForFixture({
+                column: 10,
+                file: 'nested/node_modules/foo/node_modules/bar/src/bar.js',
+                line: 28,
+                name: 'barFunction',
+                package: {
+                  directory: 'nested/node_modules/foo/node_modules/bar',
+                  main: 'nested/node_modules/foo/node_modules/bar/src/bar.js',
+                  name: 'bar',
+                  version: '3.2.1'
+                }
+              }))
+            })
+        })
+      })
+
+      context('and both package and "knocking" package are excluded via "excludes"', () => {
         it('should return promise for null', () => {
           return nested.bar(helpers.createOptions({ excludes: [ 'bar', 'nested' ] }))
+            .then((caller) => {
+              expect(caller).to.be.null
+            })
+        })
+      })
+
+      context('and both package and "knocking" package are excluded via "filterPackages"', () => {
+        it('should return promise for null', () => {
+          return nested.bar(helpers.createOptions({
+            filterPackages: (pkg) => {
+              return [ 'bar', 'nested' ].indexOf(pkg.name) < 0
+            }
+          }))
             .then((caller) => {
               expect(caller).to.be.null
             })
@@ -152,9 +214,17 @@ describe('knockknock:fixture:nested', () => {
         }))
       })
 
-      context('and package is excluded', () => {
+      context('and package is excluded via "excludes"', () => {
         it('should return null', () => {
           const caller = nested.foo.sync(helpers.createOptions({ excludes: 'nested' }))
+
+          expect(caller).to.be.null
+        })
+      })
+
+      context('and package is excluded via "filterPackages"', () => {
+        it('should return null', () => {
+          const caller = nested.foo.sync(helpers.createOptions({ filterPackages: (pkg) => pkg.name !== 'nested' }))
 
           expect(caller).to.be.null
         })
@@ -179,7 +249,7 @@ describe('knockknock:fixture:nested', () => {
         }))
       })
 
-      context('and "knocking" package is excluded', () => {
+      context('and "knocking" package is excluded via "excludes"', () => {
         it('should return caller & package information for fixture file', () => {
           const caller = nested.bar.sync(helpers.createOptions({ excludes: 'bar' }))
 
@@ -198,7 +268,26 @@ describe('knockknock:fixture:nested', () => {
         })
       })
 
-      context('and package is excluded', () => {
+      context('and "knocking" package is excluded via "filterPackages"', () => {
+        it('should return caller & package information for fixture file', () => {
+          const caller = nested.bar.sync(helpers.createOptions({ filterPackages: (pkg) => pkg.name !== 'bar' }))
+
+          expect(caller).to.deep.equal(helpers.resolveCallerForFixture({
+            column: 14,
+            file: 'nested/src/nested.js',
+            line: 32,
+            name: 'nestedBarSyncFunction',
+            package: {
+              directory: 'nested',
+              main: 'nested/src/nested.js',
+              name: 'nested',
+              version: '3.0.1'
+            }
+          }))
+        })
+      })
+
+      context('and package is excluded via "excludes"', () => {
         it('should return caller & package information for indirect fixture file', () => {
           const caller = nested.bar.sync(helpers.createOptions({ excludes: 'nested' }))
 
@@ -217,9 +306,40 @@ describe('knockknock:fixture:nested', () => {
         })
       })
 
-      context('and both package and "knocking" package are excluded', () => {
+      context('and package is excluded via "filterPackages"', () => {
+        it('should return caller & package information for indirect fixture file', () => {
+          const caller = nested.bar.sync(helpers.createOptions({ filterPackages: (pkg) => pkg.name !== 'nested' }))
+
+          expect(caller).to.deep.equal(helpers.resolveCallerForFixture({
+            column: 14,
+            file: 'nested/node_modules/foo/node_modules/bar/src/bar.js',
+            line: 31,
+            name: 'barSyncFunction',
+            package: {
+              directory: 'nested/node_modules/foo/node_modules/bar',
+              main: 'nested/node_modules/foo/node_modules/bar/src/bar.js',
+              name: 'bar',
+              version: '3.2.1'
+            }
+          }))
+        })
+      })
+
+      context('and both package and "knocking" package are excluded via "excludes"', () => {
         it('should return null', () => {
           const caller = nested.bar.sync(helpers.createOptions({ excludes: [ 'bar', 'nested' ] }))
+
+          expect(caller).to.be.null
+        })
+      })
+
+      context('and both package and "knocking" package are excluded via "filterPackages"', () => {
+        it('should return null', () => {
+          const caller = nested.bar.sync(helpers.createOptions({
+            filterPackages: (pkg) => {
+              return [ 'bar', 'nested' ].indexOf(pkg.name) < 0
+            }
+          }))
 
           expect(caller).to.be.null
         })
