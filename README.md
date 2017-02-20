@@ -122,7 +122,7 @@ The current version of KnockKnock.
 const whoIsThere = require('knockknock')
 
 whoIsThere.version
-=> "0.1.0"
+=> "0.1.1"
 ```
 
 ## Bugs

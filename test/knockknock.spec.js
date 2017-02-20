@@ -25,9 +25,45 @@
 const expect = require('chai').expect
 
 const knockknock = require('../src/knockknock')
+const helpers = require('./helpers')
+const internal = require('./fixtures/internal/src/internal')
 const version = require('../package.json').version
 
 describe('knockknock', () => {
+  context('when asynchronous', () => {
+    before(() => knockknock.clearCache())
+
+    it('should return promise for caller containing a copy of cached package information (#2)', () => {
+      let package1
+      let package2
+
+      return internal(helpers.createOptions())
+        .then((caller) => {
+          package1 = caller.package
+
+          return internal(helpers.createOptions())
+        })
+        .then((caller) => {
+          package2 = caller.package
+
+          expect(package1).to.not.equal(package2)
+          expect(package1).to.deep.equal(package2)
+        })
+    })
+  })
+
+  context('when synchronous', () => {
+    before(() => knockknock.clearCache())
+
+    it('should return caller containing a copy of cached package information (#2)', () => {
+      const package1 = internal.sync(helpers.createOptions()).package
+      const package2 = internal.sync(helpers.createOptions()).package
+
+      expect(package1).to.not.equal(package2)
+      expect(package1).to.deep.equal(package2)
+    })
+  })
+
   describe('.version', () => {
     it('should match package version', () => {
       expect(knockknock.version).to.equal(version)

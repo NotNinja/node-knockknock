@@ -36,6 +36,7 @@ describe('knockknock:fixture:internal', () => {
       return internal(helpers.createOptions())
         .then((caller) => {
           expect(caller).to.deep.equal(helpers.resolveCallerForFixture({
+            column: 17,
             file: 'internal/src/internal.js',
             line: 30,
             name: '<anonymous>',
@@ -66,6 +67,7 @@ describe('knockknock:fixture:internal', () => {
       const caller = internal.sync(helpers.createOptions())
 
       expect(caller).to.deep.equal(helpers.resolveCallerForFixture({
+        column: 16,
         file: 'internal/src/internal.js',
         line: 34,
         name: '<anonymous>',

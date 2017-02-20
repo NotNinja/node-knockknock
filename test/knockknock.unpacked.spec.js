@@ -66,6 +66,7 @@ describe('knockknock:fixture:unpackaged', () => {
       return unpackaged(path.resolve(__dirname, '../'))
         .then((caller) => {
           expect(caller).to.deep.equal({
+            column: 10,
             file: path.join(tempDirPath, 'src', 'unpackaged.js'),
             line: 28,
             name: 'unpackagedFunction',
@@ -82,6 +83,7 @@ describe('knockknock:fixture:unpackaged', () => {
       const caller = unpackaged.sync(path.resolve(__dirname, '../'))
 
       expect(caller).to.deep.equal({
+        column: 14,
         file: path.join(tempDirPath, 'src', 'unpackaged.js'),
         line: 31,
         name: 'unpackagedSyncFunction',
