@@ -63,7 +63,7 @@ class Finder {
       file: filePath,
       line: frame.getLineNumber(),
       name: frame.getFunctionName() || '<anonymous>',
-      package: descriptor
+      package: descriptor ? Object.assign({}, descriptor) : null
     }
   }
 
