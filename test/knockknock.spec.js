@@ -50,6 +50,21 @@ describe('knockknock', () => {
           expect(package1).to.deep.equal(package2)
         })
     })
+
+    context('and "filterPackages" option modifies package information', () => {
+      it('should have no affect on contained package information (#5)', () => {
+        return internal(helpers.createOptions({
+          filterPackages: (pkg) => {
+            pkg.name = 'bad'
+
+            return true
+          }
+        }))
+          .then((caller) => {
+            expect(caller.package.name).to.equal('internal')
+          })
+      })
+    })
   })
 
   context('when synchronous', () => {
@@ -61,6 +76,20 @@ describe('knockknock', () => {
 
       expect(package1).to.not.equal(package2)
       expect(package1).to.deep.equal(package2)
+    })
+
+    context('and "filterPackages" option modifies package information', () => {
+      it('should have no affect on contained package information (#5)', () => {
+        const caller = internal.sync(helpers.createOptions({
+          filterPackages: (pkg) => {
+            pkg.name = 'bad'
+
+            return true
+          }
+        }))
+
+        expect(caller.package.name).to.equal('internal')
+      })
     })
   })
 
