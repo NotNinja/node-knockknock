@@ -37,6 +37,7 @@ describe('knockknock:fixture:flat', () => {
         return flat.foo(helpers.createOptions())
           .then((caller) => {
             expect(caller).to.deep.equal(helpers.resolveCallerForFixture({
+              column: 10,
               file: 'flat/src/flat.js',
               line: 36,
               name: 'flatFooFunction',
@@ -65,6 +66,7 @@ describe('knockknock:fixture:flat', () => {
         return flat.bar(helpers.createOptions())
           .then((caller) => {
             expect(caller).to.deep.equal(helpers.resolveCallerForFixture({
+              column: 10,
               file: 'flat/node_modules/bar/src/bar.js',
               line: 28,
               name: 'barFunction',
@@ -83,6 +85,7 @@ describe('knockknock:fixture:flat', () => {
           return flat.bar(helpers.createOptions({ excludes: 'bar' }))
             .then((caller) => {
               expect(caller).to.deep.equal(helpers.resolveCallerForFixture({
+                column: 10,
                 file: 'flat/src/flat.js',
                 line: 29,
                 name: 'flatBarFunction',
@@ -102,6 +105,7 @@ describe('knockknock:fixture:flat', () => {
           return flat.bar(helpers.createOptions({ excludes: 'flat' }))
             .then((caller) => {
               expect(caller).to.deep.equal(helpers.resolveCallerForFixture({
+                column: 10,
                 file: 'flat/node_modules/bar/src/bar.js',
                 line: 28,
                 name: 'barFunction',
@@ -135,6 +139,7 @@ describe('knockknock:fixture:flat', () => {
         const caller = flat.foo.sync(helpers.createOptions())
 
         expect(caller).to.deep.equal(helpers.resolveCallerForFixture({
+          column: 14,
           file: 'flat/src/flat.js',
           line: 39,
           name: 'flatFooSyncFunction',
@@ -161,6 +166,7 @@ describe('knockknock:fixture:flat', () => {
         const caller = flat.bar.sync(helpers.createOptions())
 
         expect(caller).to.deep.equal(helpers.resolveCallerForFixture({
+          column: 14,
           file: 'flat/node_modules/bar/src/bar.js',
           line: 31,
           name: 'barSyncFunction',
@@ -178,6 +184,7 @@ describe('knockknock:fixture:flat', () => {
           const caller = flat.bar.sync(helpers.createOptions({ excludes: 'bar' }))
 
           expect(caller).to.deep.equal(helpers.resolveCallerForFixture({
+            column: 14,
             file: 'flat/src/flat.js',
             line: 32,
             name: 'flatBarSyncFunction',
@@ -196,6 +203,7 @@ describe('knockknock:fixture:flat', () => {
           const caller = flat.bar.sync(helpers.createOptions({ excludes: 'flat' }))
 
           expect(caller).to.deep.equal(helpers.resolveCallerForFixture({
+            column: 14,
             file: 'flat/node_modules/bar/src/bar.js',
             line: 31,
             name: 'barSyncFunction',

@@ -36,6 +36,7 @@ describe('knockknock:fixture:server', () => {
       return server(helpers.createOptions())
         .then((caller) => {
           expect(caller).to.deep.equal(helpers.resolveCallerForFixture({
+            column: 10,
             file: 'server/server.js',
             line: 28,
             name: 'serverFunction',
@@ -66,6 +67,7 @@ describe('knockknock:fixture:server', () => {
       const caller = server.sync(helpers.createOptions())
 
       expect(caller).to.deep.equal(helpers.resolveCallerForFixture({
+        column: 14,
         file: 'server/server.js',
         line: 31,
         name: 'serverSyncFunction',

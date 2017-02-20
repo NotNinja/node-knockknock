@@ -59,6 +59,7 @@ class Finder {
    */
   static _buildCaller(descriptor, filePath, frame) {
     return {
+      column: frame.getColumnNumber(),
       file: filePath,
       line: frame.getLineNumber(),
       name: frame.getFunctionName() || '<anonymous>',

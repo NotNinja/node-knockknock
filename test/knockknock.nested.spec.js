@@ -37,6 +37,7 @@ describe('knockknock:fixture:nested', () => {
         return nested.foo(helpers.createOptions())
           .then((caller) => {
             expect(caller).to.deep.equal(helpers.resolveCallerForFixture({
+              column: 10,
               file: 'nested/src/nested.js',
               line: 36,
               name: 'nestedFooFunction',
@@ -65,6 +66,7 @@ describe('knockknock:fixture:nested', () => {
         return nested.bar(helpers.createOptions())
           .then((caller) => {
             expect(caller).to.deep.equal(helpers.resolveCallerForFixture({
+              column: 10,
               file: 'nested/node_modules/foo/node_modules/bar/src/bar.js',
               line: 28,
               name: 'barFunction',
@@ -83,6 +85,7 @@ describe('knockknock:fixture:nested', () => {
           return nested.bar(helpers.createOptions({ excludes: 'bar' }))
             .then((caller) => {
               expect(caller).to.deep.equal(helpers.resolveCallerForFixture({
+                column: 10,
                 file: 'nested/src/nested.js',
                 line: 29,
                 name: 'nestedBarFunction',
@@ -102,6 +105,7 @@ describe('knockknock:fixture:nested', () => {
           return nested.bar(helpers.createOptions({ excludes: 'nested' }))
             .then((caller) => {
               expect(caller).to.deep.equal(helpers.resolveCallerForFixture({
+                column: 10,
                 file: 'nested/node_modules/foo/node_modules/bar/src/bar.js',
                 line: 28,
                 name: 'barFunction',
@@ -135,6 +139,7 @@ describe('knockknock:fixture:nested', () => {
         const caller = nested.foo.sync(helpers.createOptions())
 
         expect(caller).to.deep.equal(helpers.resolveCallerForFixture({
+          column: 14,
           file: 'nested/src/nested.js',
           line: 39,
           name: 'nestedFooSyncFunction',
@@ -161,6 +166,7 @@ describe('knockknock:fixture:nested', () => {
         const caller = nested.bar.sync(helpers.createOptions())
 
         expect(caller).to.deep.equal(helpers.resolveCallerForFixture({
+          column: 14,
           file: 'nested/node_modules/foo/node_modules/bar/src/bar.js',
           line: 31,
           name: 'barSyncFunction',
@@ -178,6 +184,7 @@ describe('knockknock:fixture:nested', () => {
           const caller = nested.bar.sync(helpers.createOptions({ excludes: 'bar' }))
 
           expect(caller).to.deep.equal(helpers.resolveCallerForFixture({
+            column: 14,
             file: 'nested/src/nested.js',
             line: 32,
             name: 'nestedBarSyncFunction',
@@ -196,6 +203,7 @@ describe('knockknock:fixture:nested', () => {
           const caller = nested.bar.sync(helpers.createOptions({ excludes: 'nested' }))
 
           expect(caller).to.deep.equal(helpers.resolveCallerForFixture({
+            column: 14,
             file: 'nested/node_modules/foo/node_modules/bar/src/bar.js',
             line: 31,
             name: 'barSyncFunction',
