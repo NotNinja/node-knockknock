@@ -23,6 +23,7 @@
 'use strict'
 
 const expect = require('chai').expect
+const path = require('path')
 
 const flat = require('./fixtures/flat/src/flat')
 const helpers = require('./helpers')
@@ -49,6 +50,24 @@ describe('knockknock:fixture:flat', () => {
               }
             }))
           })
+      })
+
+      context('and file is excluded via "filterFiles"', () => {
+        it('should return promise for null', () => {
+          return flat.foo(helpers.createOptions({ filterFiles: (filePath) => path.basename(filePath) !== 'flat.js' }))
+            .then((caller) => {
+              expect(caller).to.be.null
+            })
+        })
+      })
+
+      context('and all files are excluded via "filterFiles"', () => {
+        it('should return promise for null', () => {
+          return flat.foo(helpers.createOptions({ filterFiles: () => false }))
+            .then((caller) => {
+              expect(caller).to.be.null
+            })
+        })
       })
 
       context('and file package is excluded via "excludes"', () => {
@@ -87,6 +106,35 @@ describe('knockknock:fixture:flat', () => {
               }
             }))
           })
+      })
+
+      context('and file is excluded via "filterFiles"', () => {
+        it('should return promise for caller & package information for fixture file', () => {
+          return flat.bar(helpers.createOptions({ filterFiles: (filePath) => path.basename(filePath) !== 'bar.js' }))
+            .then((caller) => {
+              expect(caller).to.deep.equal(helpers.resolveCallerForFixture({
+                column: 10,
+                file: 'flat/src/flat.js',
+                line: 29,
+                name: 'flatBarFunction',
+                package: {
+                  directory: 'flat',
+                  main: 'flat/src/flat.js',
+                  name: 'flat',
+                  version: '1.0.1'
+                }
+              }))
+            })
+        })
+      })
+
+      context('and all files are excluded via "filterFiles"', () => {
+        it('should return promise for null', () => {
+          return flat.bar(helpers.createOptions({ filterFiles: () => false }))
+            .then((caller) => {
+              expect(caller).to.be.null
+            })
+        })
       })
 
       context('and "knocking" package is excluded via "excludes"', () => {
@@ -169,7 +217,7 @@ describe('knockknock:fixture:flat', () => {
         })
       })
 
-      context('and both package and "knocking" package are excluded via "excludes"', () => {
+      context('and both file package and "knocking" package are excluded via "excludes"', () => {
         it('should return promise for null', () => {
           return flat.bar(helpers.createOptions({ excludes: [ 'bar', 'flat' ] }))
             .then((caller) => {
@@ -178,7 +226,7 @@ describe('knockknock:fixture:flat', () => {
         })
       })
 
-      context('and both package and "knocking" package are excluded via "filterPackages"', () => {
+      context('and both file package and "knocking" package are excluded via "filterPackages"', () => {
         it('should return promise for null', () => {
           return flat.bar(helpers.createOptions({ filterPackages: (pkg) => [ 'bar', 'flat' ].indexOf(pkg.name) < 0 }))
             .then((caller) => {
@@ -210,7 +258,27 @@ describe('knockknock:fixture:flat', () => {
         }))
       })
 
-      context('and package is excluded via "excludes"', () => {
+      context('and file is excluded via "filterFiles"', () => {
+        it('should return null', () => {
+          const caller = flat.foo.sync(helpers.createOptions({
+            filterFiles: (filePath) => {
+              return path.basename(filePath) !== 'flat.js'
+            }
+          }))
+
+          expect(caller).to.be.null
+        })
+      })
+
+      context('and all files are excluded via "filterFiles"', () => {
+        it('should return null', () => {
+          const caller = flat.foo.sync(helpers.createOptions({ filterFiles: () => false }))
+
+          expect(caller).to.be.null
+        })
+      })
+
+      context('and file package is excluded via "excludes"', () => {
         it('should return null', () => {
           const caller = flat.foo.sync(helpers.createOptions({ excludes: 'flat' }))
 
@@ -218,7 +286,7 @@ describe('knockknock:fixture:flat', () => {
         })
       })
 
-      context('and package is excluded via "filterPackages"', () => {
+      context('and file package is excluded via "filterPackages"', () => {
         it('should return null', () => {
           const caller = flat.foo.sync(helpers.createOptions({ filterPackages: (pkg) => pkg.name !== 'flat' }))
 
@@ -243,6 +311,37 @@ describe('knockknock:fixture:flat', () => {
             version: '1.1.2'
           }
         }))
+      })
+
+      context('and file is excluded via "filterFiles"', () => {
+        it('should return caller & package information for fixture file', () => {
+          const caller = flat.bar.sync(helpers.createOptions({
+            filterFiles: (filePath) => {
+              return path.basename(filePath) !== 'bar.js'
+            }
+          }))
+
+          expect(caller).to.deep.equal(helpers.resolveCallerForFixture({
+            column: 14,
+            file: 'flat/src/flat.js',
+            line: 32,
+            name: 'flatBarSyncFunction',
+            package: {
+              directory: 'flat',
+              main: 'flat/src/flat.js',
+              name: 'flat',
+              version: '1.0.1'
+            }
+          }))
+        })
+      })
+
+      context('and all files are excluded via "filterFiles"', () => {
+        it('should return null', () => {
+          const caller = flat.bar.sync(helpers.createOptions({ filterFiles: () => false }))
+
+          expect(caller).to.be.null
+        })
       })
 
       context('and "knocking" package is excluded via "excludes"', () => {
@@ -283,7 +382,7 @@ describe('knockknock:fixture:flat', () => {
         })
       })
 
-      context('and package is excluded via "excludes"', () => {
+      context('and file package is excluded via "excludes"', () => {
         it('should return caller & package information for indirect fixture file', () => {
           const caller = flat.bar.sync(helpers.createOptions({ excludes: 'flat' }))
 
@@ -302,7 +401,7 @@ describe('knockknock:fixture:flat', () => {
         })
       })
 
-      context('and package is excluded via "filterPackages"', () => {
+      context('and file package is excluded via "filterPackages"', () => {
         it('should return caller & package information for indirect fixture file', () => {
           const caller = flat.bar.sync(helpers.createOptions({ filterPackages: (pkg) => pkg.name !== 'flat' }))
 
@@ -321,7 +420,7 @@ describe('knockknock:fixture:flat', () => {
         })
       })
 
-      context('and both package and "knocking" package are excluded via "excludes"', () => {
+      context('and both file package and "knocking" package are excluded via "excludes"', () => {
         it('should return null', () => {
           const caller = flat.bar.sync(helpers.createOptions({ excludes: [ 'bar', 'flat' ] }))
 
@@ -329,7 +428,7 @@ describe('knockknock:fixture:flat', () => {
         })
       })
 
-      context('and both package and "knocking" package are excluded via "filterPackages"', () => {
+      context('and both file package and "knocking" package are excluded via "filterPackages"', () => {
         it('should return null', () => {
           const caller = flat.bar.sync(helpers.createOptions({
             filterPackages: (pkg) => {

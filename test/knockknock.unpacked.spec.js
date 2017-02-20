@@ -27,6 +27,7 @@ const ncp = require('ncp').ncp
 const path = require('path')
 const tmp = require('tmp')
 
+const helpers = require('./helpers')
 const knockknock = require('../src/knockknock')
 
 describe('knockknock:fixture:unpackaged', () => {
@@ -75,6 +76,7 @@ describe('knockknock:fixture:unpackaged', () => {
         })
     })
 
+    // TODO: #7 Add tests covering use of "filterFiles" for unpackaged file
     // TODO: #7 Add test covering use of "filterPackages" for unpackaged file
   })
 
@@ -93,6 +95,7 @@ describe('knockknock:fixture:unpackaged', () => {
       })
     })
 
+    // TODO: #7 Add tests covering use of "filterFiles" for unpackaged file
     // TODO: #7 Add test covering use of "filterPackages" for unpackaged file
   })
 })

@@ -23,6 +23,7 @@
 'use strict'
 
 const expect = require('chai').expect
+const path = require('path')
 
 const helpers = require('./helpers')
 const knockknock = require('../src/knockknock')
@@ -48,6 +49,24 @@ describe('knockknock:fixture:server', () => {
             }
           }))
         })
+    })
+
+    context('and file is excluded via "filterFiles"', () => {
+      it('should return promise for null', () => {
+        return server(helpers.createOptions({ filterFiles: (filePath) => path.basename(filePath) !== 'server.js' }))
+          .then((caller) => {
+            expect(caller).to.be.null
+          })
+      })
+    })
+
+    context('and all files are excluded via "filterFiles"', () => {
+      it('should return promise for null', () => {
+        return server(helpers.createOptions({ filterFiles: () => false }))
+          .then((caller) => {
+            expect(caller).to.be.null
+          })
+      })
     })
 
     context('and package is excluded via "excludes"', () => {
@@ -87,6 +106,26 @@ describe('knockknock:fixture:server', () => {
           version: '4.0.1'
         }
       }))
+    })
+
+    context('and file is excluded via "filterFiles"', () => {
+      it('should return null', () => {
+        const caller = server.sync(helpers.createOptions({
+          filterFiles: (filePath) => {
+            return path.basename(filePath) !== 'server.js'
+          }
+        }))
+
+        expect(caller).to.be.null
+      })
+    })
+
+    context('and all files are excluded via "filterFiles"', () => {
+      it('should return null', () => {
+        const caller = server.sync(helpers.createOptions({ filterFiles: () => false }))
+
+        expect(caller).to.be.null
+      })
     })
 
     context('and package is excluded via "excludes"', () => {

@@ -23,6 +23,7 @@
 'use strict'
 
 const expect = require('chai').expect
+const path = require('path')
 
 const helpers = require('./helpers')
 const internal = require('./fixtures/internal/src/internal')
@@ -48,6 +49,24 @@ describe('knockknock:fixture:internal', () => {
             }
           }))
         })
+    })
+
+    context('and file is excluded via "filterFiles"', () => {
+      it('should return promise for null', () => {
+        return internal(helpers.createOptions({ filterFiles: (filePath) => path.basename(filePath) !== 'internal.js' }))
+          .then((caller) => {
+            expect(caller).to.be.null
+          })
+      })
+    })
+
+    context('and all files are excluded via "filterFiles"', () => {
+      it('should return promise for null', () => {
+        return internal(helpers.createOptions({ filterFiles: () => false }))
+          .then((caller) => {
+            expect(caller).to.be.null
+          })
+      })
     })
 
     context('and package is excluded via "excludes"', () => {
@@ -87,6 +106,26 @@ describe('knockknock:fixture:internal', () => {
           version: '2.0.1'
         }
       }))
+    })
+
+    context('and file is excluded via "filterFiles"', () => {
+      it('should return null', () => {
+        const caller = internal.sync(helpers.createOptions({
+          filterFiles: (filePath) => {
+            return path.basename(filePath) !== 'internal.js'
+          }
+        }))
+
+        expect(caller).to.be.null
+      })
+    })
+
+    context('and all files are excluded via "filterFiles"', () => {
+      it('should return null', () => {
+        const caller = internal.sync(helpers.createOptions({ filterFiles: () => false }))
+
+        expect(caller).to.be.null
+      })
     })
 
     context('and package is excluded via "excludes"', () => {

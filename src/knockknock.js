@@ -169,6 +169,7 @@ class Finder {
 
     return {
       excludes,
+      filterFiles: options.filterFiles,
       filterPackages: options.filterPackages
     }
   }
@@ -203,17 +204,6 @@ class Finder {
      * @type {knockknock~Options}
      */
     this._options = Finder._parseOptions(options)
-
-    /**
-     * Contains the results of calling the <code>filterPackages</code> option for individual packages.
-     *
-     * The intension of this map is to ensure that <code>filterPackages</code> is only called once per package
-     * installation.
-     *
-     * @private
-     * @type {Map.<knockknock~Package, boolean>}
-     */
-    this._filteredPackages = new Map()
 
     /**
      * Whether package directory searches initiated by this {@link Finder} should be made synchronously.
@@ -300,8 +290,12 @@ class Finder {
 
     debug('Found package "%s" containing file: %s', pkg.name, filePath)
 
-    if (!this._isIncluded(filePath, pkg)) {
-      debug('Excluding call within package "%s" from file: %s', pkg.name, filePath)
+    if (!this._isPackageIncluded(pkg)) {
+      debug('Skipping call within package "%s" from file: %s', pkg.name, filePath)
+
+      return this.findNext()
+    } else if (!this._isFileIncluded(filePath)) {
+      debug('Skipping call from file: %s', filePath)
 
       return this.findNext()
     }
@@ -310,37 +304,37 @@ class Finder {
   }
 
   /**
-   * Returns whether the call from the specified <code>filePath</code> within the <code>pkg</code> provided should be
-   * included.
+   * Returns whether a call originating from the specifed <code>filePath</code> should be included.
    *
-   * This is determined based on the runtime options that were passed in.
+   * This is determined using the runtime options that were passed in.
    *
    * @param {string} filePath - the path of the file responsible for the current call in the stack
-   * @param {?knockknock~Package} pkg - the information for the package responsible for the current call in the stack
-   * (may be <code>null</code> if none could be found)
    * @return {boolean} <code>true</code> if the call from <code>filePath</code> should be included; otherwise
    * <code>false</code>.
    * @private
    */
-  _isIncluded(filePath, pkg) {
+  _isFileIncluded(filePath) {
+    return !this._options.filterFiles || this._options.filterFiles(filePath)
+  }
+
+  /**
+   * Returns whether a call originating from a file contained within the <code>pkg</code> provided should be included.
+   *
+   * This is determined using the runtime options that were passed in.
+   *
+   * @param {?knockknock~Package} pkg - the information for the package responsible for the current call in the stack
+   * (may be <code>null</code> if none could be found)
+   * @return {boolean} <code>true</code> if the call from within <code>pkg</code> should be included; otherwise
+   * <code>false</code>.
+   * @private
+   */
+  _isPackageIncluded(pkg) {
     // TODO: #7 Only perform this check when pkg is not null
     if (this._options.excludes.indexOf(pkg.name) >= 0) {
       return false
     }
 
-    if (this._filteredPackages.has(pkg)) {
-      return this._filteredPackages.get(pkg)
-    }
-
-    if (this._options.filterPackages) {
-      const included = this._options.filterPackages(Object.assign({}, pkg))
-
-      this._filteredPackages.set(pkg, included)
-
-      return included
-    }
-
-    return true
+    return !this._options.filterPackages || this._options.filterPackages(Object.assign({}, pkg))
   }
 
 }
@@ -411,6 +405,16 @@ module.exports.sync = function whoIsThereSync(options) {
 module.exports.version = version
 
 /**
+ * Called with path of the current file that is being processed to allow consumers to make a decision on whether the
+ * file is to be included.
+ *
+ * @callback knockknock~FilterFilesCallback
+ * @param {string} filePath - the path of the current file being processed
+ * @return {boolean} <code>true</code> to include calls originating from <code>filePath</code>; otherwise
+ * <code>false</code>.
+ */
+
+/**
  * Called with the information for the package containing the current file that is being processed to allow consumers to
  * make a decision on whether files within the specified package are to be included.
  *
@@ -420,8 +424,8 @@ module.exports.version = version
  * @callback knockknock~FilterPackagesCallback
  * @param {?knockknock~Package} pkg - the package information for the current file being processed (may be
  * <code>null</code> if no package was found)
- * @return {boolean} <code>true</code> to include files within the package (or all unpackaged files, if <code>pkg</code>
- * is <code>null</code>); otherwise <code>false</code>.
+ * @return {boolean} <code>true</code> to include calls originating from files within the package (or all unpackaged
+ * files, if <code>pkg</code> is <code>null</code>); otherwise <code>false</code>.
  */
 
 /**
@@ -465,6 +469,8 @@ module.exports.version = version
  * @typedef {Object} knockknock~Options
  * @property {string|string[]} [excludes] - The names of packages whose calls should be ignored when trying to find the
  * caller.
+ * @property {knockknock~FilterFilesCallback} [filterFiles] - A function to be called to filter files based on their
+ * path. This is only called for files contained within included packages (if any).
  * @property {knockknock~FilterPackagesCallback} [filterPackages] - A function to be called to filter files based on the
  * package to which they belong (if any). This is only called for packages whose names are not listed in
  * <code>excludes</code>.

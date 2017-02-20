@@ -38,6 +38,33 @@ describe('knockknock:fixture:single', () => {
           expect(caller).to.be.null
         })
     })
+
+    context('and all files are excluded via "filterFiles"', () => {
+      it('should return promise for null', () => {
+        return single(helpers.createOptions({ filterFiles: () => false }))
+          .then((caller) => {
+            expect(caller).to.be.null
+          })
+      })
+    })
+
+    context('and package is excluded via "excludes"', () => {
+      it('should return promise for null', () => {
+        return single(helpers.createOptions({ excludes: 'single' }))
+          .then((caller) => {
+            expect(caller).to.be.null
+          })
+      })
+    })
+
+    context('and package is excluded via "filterPackages"', () => {
+      it('should return promise for null', () => {
+        return single(helpers.createOptions({ filterPackages: (pkg) => pkg.name !== 'single' }))
+          .then((caller) => {
+            expect(caller).to.be.null
+          })
+      })
+    })
   })
 
   context('when synchronous', () => {
@@ -47,6 +74,30 @@ describe('knockknock:fixture:single', () => {
       const caller = single.sync(helpers.createOptions())
 
       expect(caller).to.be.null
+    })
+
+    context('and all files are excluded via "filterFiles"', () => {
+      it('should return null', () => {
+        const caller = single.sync(helpers.createOptions({ filterFiles: () => false }))
+
+        expect(caller).to.be.null
+      })
+    })
+
+    context('and package is excluded via "excludes"', () => {
+      it('should return null', () => {
+        const caller = single.sync(helpers.createOptions({ excludes: 'single' }))
+
+        expect(caller).to.be.null
+      })
+    })
+
+    context('and package is excluded via "filterPackages"', () => {
+      it('should return null', () => {
+        const caller = single.sync(helpers.createOptions({ filterPackages: (pkg) => pkg.name !== 'single' }))
+
+        expect(caller).to.be.null
+      })
     })
   })
 })
