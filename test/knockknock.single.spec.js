@@ -32,21 +32,106 @@ describe('knockknock:fixture:single', () => {
   context('when asynchronous', () => {
     before(() => knockknock.clearCache())
 
-    it('should return promise for null', () => {
+    it('should return promise for empty array', () => {
       return single(helpers.createOptions())
-        .then((caller) => {
-          expect(caller).to.be.null
+        .then((callers) => {
+          expect(callers).to.be.empty
         })
+    })
+
+    context('and first call is skipped via "offset"', () => {
+      it('should return promise for empty array', () => {
+        return single(helpers.createOptions({ offset: 1 }))
+          .then((callers) => {
+            expect(callers).to.be.empty
+          })
+      })
+    })
+
+    context('and limited to a single caller via "limit"', () => {
+      it('should return promise for empty array', () => {
+        return single(helpers.createOptions({ limit: 1 }))
+          .then((callers) => {
+            expect(callers).to.be.empty
+          })
+      })
+    })
+
+    context('and all files are excluded via "filterFiles"', () => {
+      it('should return promise for empty array', () => {
+        return single(helpers.createOptions({ filterFiles: () => false }))
+          .then((callers) => {
+            expect(callers).to.be.empty
+          })
+      })
+    })
+
+    context('and package is excluded via "excludes"', () => {
+      it('should return promise for empty array', () => {
+        return single(helpers.createOptions({ excludes: 'single' }))
+          .then((callers) => {
+            expect(callers).to.be.empty
+          })
+      })
+    })
+
+    context('and package is excluded via "filterPackages"', () => {
+      it('should return promise for empty array', () => {
+        return single(helpers.createOptions({ filterPackages: (pkg) => pkg.name !== 'single' }))
+          .then((callers) => {
+            expect(callers).to.be.empty
+          })
+      })
     })
   })
 
   context('when synchronous', () => {
     before(() => knockknock.clearCache())
 
-    it('should return null', () => {
-      const caller = single.sync(helpers.createOptions())
+    it('should return empty array', () => {
+      const callers = single.sync(helpers.createOptions())
 
-      expect(caller).to.be.null
+      expect(callers).to.be.empty
+    })
+
+    context('and first call is skipped via "offset"', () => {
+      it('should return promise for empty array', () => {
+        const callers = single.sync(helpers.createOptions({ offset: 1 }))
+
+        expect(callers).to.be.empty
+      })
+    })
+
+    context('and limited to a single caller via "limit"', () => {
+      it('should return promise for empty array', () => {
+        const callers = single.sync(helpers.createOptions({ limit: 1 }))
+
+        expect(callers).to.be.empty
+      })
+    })
+
+    context('and all files are excluded via "filterFiles"', () => {
+      it('should return empty array', () => {
+        const callers = single.sync(helpers.createOptions({ filterFiles: () => false }))
+
+        expect(callers).to.be.empty
+      })
+    })
+
+    context('and package is excluded via "excludes"', () => {
+      it('should return empty array', () => {
+        const callers = single.sync(helpers.createOptions({ excludes: 'single' }))
+
+        expect(callers).to.be.empty
+      })
+    })
+
+    context('and package is excluded via "filterPackages"', () => {
+      it('should return empty array', () => {
+        const callers = single.sync(helpers.createOptions({ filterPackages: (pkg) => pkg.name !== 'single' }))
+
+        expect(callers).to.be.empty
+      })
     })
   })
 })

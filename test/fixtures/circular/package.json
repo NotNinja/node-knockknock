@@ -1,0 +1,6 @@
+{
+  "name": "circular",
+  "version": "0.0.1",
+  "main": "src/circular.js",
+  "private": true
+}

@@ -22,15 +22,9 @@
 
 'use strict'
 
-/* eslint "func-names": "off", "no-extra-parens": "off" */
-
-const whoIsThere = require('../../../../src/knockknock')
-
-module.exports = function fooFunction(options) {
-  return (() => whoIsThere(options))()
+module.exports = function circularBarFunction(options) {
+  return require('./circular').circular(options)
 }
-module.exports.sync = function fooSyncFunction(options) {
-  return (function() {
-    return whoIsThere.sync(options)
-  }())
+module.exports.sync = function circularBarSyncFunction(options) {
+  return require('./circular').circular.sync(options)
 }

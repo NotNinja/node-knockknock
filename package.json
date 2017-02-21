@@ -1,10 +1,10 @@
 {
   "name": "knockknock",
-  "version": "0.1.1",
-  "description": "Who's there? The module that just called your code",
-  "homepage": "https://github.com/Skelp/knockknock",
+  "version": "0.2.0",
+  "description": "Who's there? The modules that just called your code",
+  "homepage": "https://github.com/Skelp/node-knockknock",
   "bugs": {
-    "url": "https://github.com/Skelp/knockknock/issues"
+    "url": "https://github.com/Skelp/node-knockknock/issues"
   },
   "author": {
     "name": "Alasdair Mercer",
@@ -16,13 +16,14 @@
     "caller",
     "callsite",
     "stack",
+    "trace",
     "knock",
     "module",
     "package"
   ],
   "repository": {
     "type": "git",
-    "url": "https://github.com/Skelp/knockknock.git"
+    "url": "https://github.com/Skelp/node-knockknock.git"
   },
   "dependencies": {
     "callsite": "^1.0.0",
@@ -32,7 +33,7 @@
   "devDependencies": {
     "chai": "^3.5.0",
     "coveralls": "^2.11.16",
-    "eslint": "^3.15.0",
+    "eslint": "^3.16.0",
     "eslint-config-skelp": "^0.1.5",
     "istanbul": "^0.4.5",
     "mocha": "^3.2.0",
