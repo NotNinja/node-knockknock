@@ -33,7 +33,7 @@
   "devDependencies": {
     "chai": "^3.5.0",
     "coveralls": "^2.11.16",
-    "eslint": "^3.15.0",
+    "eslint": "^3.16.0",
     "eslint-config-skelp": "^0.1.5",
     "istanbul": "^0.4.5",
     "mocha": "^3.2.0",
