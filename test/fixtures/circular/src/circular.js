@@ -30,6 +30,7 @@ module.exports = function circularFunction(options) {
 module.exports.sync = function circularSyncFunction(options) {
   return require('./foo').sync(options)
 }
+
 module.exports.circular = function circularCircularFunction(options) {
   return whoIsThere(options)
 }

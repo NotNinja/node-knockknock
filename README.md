@@ -8,10 +8,10 @@
     888    Y88b 888  888  "Y88P"   "Y8888P 888  888 888    Y88b 888  888  "Y88P"   "Y8888P 888  888
 
 Who's there?  
-The module that just called your code.
+The modules that just called your code.
 
-[KnockKnock](https://github.com/Skelp/knockknock) provides information about the file, function, and package that was
-responsible for calling your module.
+[KnockKnock](https://github.com/Skelp/knockknock) provides information about the files, functions, and packages that
+were responsible for calling your module.
 
 [![Build](https://img.shields.io/travis/Skelp/knockknock/develop.svg?style=flat-square)](https://travis-ci.org/Skelp/knockknock)
 [![Coverage](https://img.shields.io/coveralls/Skelp/knockknock/develop.svg?style=flat-square)](https://coveralls.io/github/Skelp/knockknock)
@@ -38,18 +38,20 @@ You'll need to have at least [Node.js](https://nodejs.org) 4 or newer.
 
 ### `knockknock([options])`
 
-Finds all of the available information about the caller asynchronously, returning a `Promise` to retrieve it. The caller
-information is provided in a format similar to below:
+Finds all of the available information about the callers asynchronously, returning a `Promise` to retrieve them. The
+information for each caller is provided in a format similar to below:
 
 ``` javascript
 {
+  // The column number within the file responsible for calling your module.
+  column: 10,
   // The file that called your module
   file: '/path/to/my-example-package/node_modules/example-server/src/start.js',
-  // The line number within that file responsible for calling your module
+  // The line number within the file responsible for calling your module
   line: 123,
-  // The name of the function within that file responsible for calling your module (or "<anonymous>" where appropriate)
+  // The name of the function within the file responsible for calling your module (or "<anonymous>" where appropriate)
   name: 'startServer',
-  // The information for the package containing that file or null if none could be found
+  // The information for the package containing the file or null if none could be found
   package: {
     // The directory of the package
     directory: '/path/to/my-example-package/node_modules/example-server',
@@ -63,8 +65,6 @@ information is provided in a format similar to below:
 }
 ```
 
-If no caller can be determined (or all belong to excluded packages), then the `Promise` is resolved with `null`.
-
 The `options` parameter is entirely optional and supports the following:
 
 | Option           | Description                                                                                                                               | Default Value |
@@ -72,8 +72,9 @@ The `options` parameter is entirely optional and supports the following:
 | `excludes`       | The name(s) of packages whose calls should be ignored. Internal calls from KnockKnock and Node.js are always ignored.                     | `[]`          |
 | `filterFiles`    | A function called to filter files based on their path. Only called for files whose containing package (if any) is also included.          | N/A           |
 | `filterPackages` | A function called to filter files based on the package to which they belong (if any). Only called if package is not listed in `excludes`. | N/A           |
+| `limit`          | The maximum number of callers to be included in the results. No limit is applied when `null`.                                             | `null`        |
 
-In most cases you'll want to at least exclude your own package so that your own internal calls are ignored via
+In most cases, you may want to at least exclude your own package so that your own package-internal calls are ignored via
 `excludes` or `filterPackages`.
 
 ``` javascript
@@ -81,13 +82,34 @@ const whoIsThere = require('knockknock')
 
 module.exports = function() {
   return whoIsThere({ excludes: 'my-example-package' })
-    .then((caller) => {
-      if (!caller) {
-        console.log('Module was called from unknown source')
+    .then((callers) => {
+      if (callers.length > 0) {
+        console.log(`Called from ${callers.length} modules`)
 
         // ...
       } else {
-        console.log(`Module was called from file "${caller.file}" in package "${caller.package ? caller.package.name : '<unknown>'}"`)
+        console.log('Called from unknown module')
+
+        // ...
+      }
+    })
+}
+```
+
+The `limit` option works great if you only want to know about the last caller:
+
+``` javascript
+const whoIsThere = require('knockknock')
+
+module.exports = function() {
+  return whoIsThere({ excludes: 'my-example-package', limit: 1 })
+    .then((callers) => {
+      if (callers.length === 1) {
+        console.log(`Called from module "${callers[0].file}" in package "${callers[0].package ? callers[0].package.name : '<unknown>'}"`)
+
+        // ...
+      } else {
+        console.log('Called from unknown module')
 
         // ...
       }
@@ -103,14 +125,14 @@ A synchronous alternative to `knockknock([options])`.
 const whoIsThere = require('knockknock')
 
 module.exports = function() {
-  const caller = whoIsThere.sync({ excludes: 'my-example-package' })
+  const callers = whoIsThere.sync({ excludes: 'my-example-package' })
 
-  if (!caller) {
-    console.log('Module was called from unknown source')
+  if (callers.length > 0) {
+    console.log(`Called from ${callers.length} modules`)
 
     // ...
   } else {
-    console.log(`Module was called from file "${caller.file}" in package "${caller.package ? caller.package.name : '<unknown>'}"`)
+    console.log('Called from unknown module')
 
     // ...
   }

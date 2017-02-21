@@ -33,10 +33,11 @@ describe('knockknock:fixture:server', () => {
   context('when asynchronous', () => {
     before(() => knockknock.clearCache())
 
-    it('should return promise for caller & package information for fixture file', () => {
+    it('should return promise for callers (incl. packages) before "knocking" file', () => {
       return server(helpers.createOptions())
-        .then((caller) => {
-          expect(caller).to.deep.equal(helpers.resolveCallerForFixture({
+        .then((callers) => {
+          expect(callers).to.have.lengthOf(1)
+          expect(callers[0]).to.deep.equal(helpers.resolveCallerForFixture({
             column: 10,
             file: 'server/server.js',
             line: 28,
@@ -51,38 +52,59 @@ describe('knockknock:fixture:server', () => {
         })
     })
 
-    context('and file is excluded via "filterFiles"', () => {
-      it('should return promise for null', () => {
+    context('and limited to a single caller via "limit"', () => {
+      it('should return promise for only caller (excl. package) before "knocking" file', () => {
+        return server(helpers.createOptions({ limit: 1 }))
+          .then((callers) => {
+            expect(callers).to.have.lengthOf(1)
+            expect(callers[0]).to.deep.equal(helpers.resolveCallerForFixture({
+              column: 10,
+              file: 'server/server.js',
+              line: 28,
+              name: 'serverFunction',
+              package: {
+                directory: 'server',
+                main: null,
+                name: 'server',
+                version: '4.0.1'
+              }
+            }))
+          })
+      })
+    })
+
+    context('and file before "knocking" file is excluded via "filterFiles"', () => {
+      it('should return promise for empty array', () => {
         return server(helpers.createOptions({ filterFiles: (filePath) => path.basename(filePath) !== 'server.js' }))
-          .then((caller) => {
-            expect(caller).to.be.null
+          .then((callers) => {
+            expect(callers).to.be.empty
           })
       })
     })
 
     context('and all files are excluded via "filterFiles"', () => {
-      it('should return promise for null', () => {
+      it('should return promise for empty array', () => {
         return server(helpers.createOptions({ filterFiles: () => false }))
-          .then((caller) => {
-            expect(caller).to.be.null
+          .then((callers) => {
+            expect(callers).to.be.empty
           })
       })
     })
 
     context('and package is excluded via "excludes"', () => {
-      it('should return promise for null', () => {
+      it('should return promise for empty array', () => {
         return server(helpers.createOptions({ excludes: 'server' }))
-          .then((caller) => {
-            expect(caller).to.be.null
+          .then((callers) => {
+            expect(callers).to.be.empty
           })
       })
     })
 
     context('and package is excluded via "filterPackages"', () => {
-      it('should return promise for null', () => {
+      it('should return promise for empty array', () => {
         return server(helpers.createOptions({ filterPackages: (pkg) => pkg.name !== 'server' }))
-          .then((caller) => {
-            expect(caller).to.be.null
+          .then((callers) => {
+            expect(callers).to.be.empty
           })
       })
     })
@@ -91,10 +113,11 @@ describe('knockknock:fixture:server', () => {
   context('when synchronous', () => {
     before(() => knockknock.clearCache())
 
-    it('should return caller & package information for fixture file', () => {
-      const caller = server.sync(helpers.createOptions())
+    it('should return callers (incl. packages) before "knocking" file', () => {
+      const callers = server.sync(helpers.createOptions())
 
-      expect(caller).to.deep.equal(helpers.resolveCallerForFixture({
+      expect(callers).to.have.lengthOf(1)
+      expect(callers[0]).to.deep.equal(helpers.resolveCallerForFixture({
         column: 14,
         file: 'server/server.js',
         line: 31,
@@ -108,39 +131,59 @@ describe('knockknock:fixture:server', () => {
       }))
     })
 
-    context('and file is excluded via "filterFiles"', () => {
-      it('should return null', () => {
-        const caller = server.sync(helpers.createOptions({
+    context('and limited to a single caller via "limit"', () => {
+      it('should return only caller (excl. package) before "knocking" file', () => {
+        const callers = server.sync(helpers.createOptions({ limit: 1 }))
+
+        expect(callers).to.have.lengthOf(1)
+        expect(callers[0]).to.deep.equal(helpers.resolveCallerForFixture({
+          column: 14,
+          file: 'server/server.js',
+          line: 31,
+          name: 'serverSyncFunction',
+          package: {
+            directory: 'server',
+            main: null,
+            name: 'server',
+            version: '4.0.1'
+          }
+        }))
+      })
+    })
+
+    context('and file before "knocking" file is excluded via "filterFiles"', () => {
+      it('should return empty array', () => {
+        const callers = server.sync(helpers.createOptions({
           filterFiles: (filePath) => {
             return path.basename(filePath) !== 'server.js'
           }
         }))
 
-        expect(caller).to.be.null
+        expect(callers).to.be.empty
       })
     })
 
     context('and all files are excluded via "filterFiles"', () => {
-      it('should return null', () => {
-        const caller = server.sync(helpers.createOptions({ filterFiles: () => false }))
+      it('should return empty array', () => {
+        const callers = server.sync(helpers.createOptions({ filterFiles: () => false }))
 
-        expect(caller).to.be.null
+        expect(callers).to.be.empty
       })
     })
 
     context('and package is excluded via "excludes"', () => {
-      it('should return null', () => {
-        const caller = server.sync(helpers.createOptions({ excludes: 'server' }))
+      it('should return empty array', () => {
+        const callers = server.sync(helpers.createOptions({ excludes: 'server' }))
 
-        expect(caller).to.be.null
+        expect(callers).to.be.empty
       })
     })
 
     context('and package is excluded via "filterPackages"', () => {
-      it('should return null', () => {
-        const caller = server.sync(helpers.createOptions({ filterPackages: (pkg) => pkg.name !== 'server' }))
+      it('should return empty array', () => {
+        const callers = server.sync(helpers.createOptions({ filterPackages: (pkg) => pkg.name !== 'server' }))
 
-        expect(caller).to.be.null
+        expect(callers).to.be.empty
       })
     })
   })

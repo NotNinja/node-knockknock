@@ -1,7 +1,7 @@
 {
   "name": "knockknock",
   "version": "0.2.0",
-  "description": "Who's there? The module that just called your code",
+  "description": "Who's there? The modules that just called your code",
   "homepage": "https://github.com/Skelp/knockknock",
   "bugs": {
     "url": "https://github.com/Skelp/knockknock/issues"
@@ -16,6 +16,7 @@
     "caller",
     "callsite",
     "stack",
+    "trace",
     "knock",
     "module",
     "package"

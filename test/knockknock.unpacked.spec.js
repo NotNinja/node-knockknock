@@ -63,10 +63,11 @@ describe('knockknock:fixture:unpackaged', () => {
   context('when asynchronous', () => {
     before(() => knockknock.clearCache())
 
-    it('should return promise for caller information', () => {
-      return unpackaged(path.resolve(__dirname, '../'))
-        .then((caller) => {
-          expect(caller).to.deep.equal({
+    it('should return promise for callers (excl. packages) before "knocking" file', () => {
+      return unpackaged(path.resolve(__dirname, '../'), helpers.createOptions())
+        .then((callers) => {
+          expect(callers).to.have.lengthOf(1)
+          expect(callers[0]).to.deep.equal({
             column: 10,
             file: path.join(tempDirPath, 'src', 'unpackaged.js'),
             line: 28,
@@ -76,17 +77,66 @@ describe('knockknock:fixture:unpackaged', () => {
         })
     })
 
-    // TODO: #7 Add tests covering use of "filterFiles" for unpackaged file
-    // TODO: #7 Add test covering use of "filterPackages" for unpackaged file
+    context('and limited to a single caller via "limit"', () => {
+      it('should return promise for only caller (excl. package) before "knocking" file', () => {
+        return unpackaged(path.resolve(__dirname, '../'), helpers.createOptions({ limit: 1 }))
+          .then((callers) => {
+            expect(callers).to.have.lengthOf(1)
+            expect(callers[0]).to.deep.equal({
+              column: 10,
+              file: path.join(tempDirPath, 'src', 'unpackaged.js'),
+              line: 28,
+              name: 'unpackagedFunction',
+              package: null
+            })
+          })
+      })
+    })
+
+    context('and file before "knocking" file is excluded via "filterFiles"', () => {
+      it('should return promise for empty array', () => {
+        return unpackaged(path.resolve(__dirname, '../'), helpers.createOptions({
+          filterFiles: (filePath) => {
+            return path.basename(filePath) !== 'unpackaged.js'
+          }
+        }))
+          .then((callers) => {
+            expect(callers).to.be.empty
+          })
+      })
+    })
+
+    context('and all files are excluded via "filterFiles"', () => {
+      it('should return promise for empty array', () => {
+        return unpackaged(path.resolve(__dirname, '../'), helpers.createOptions({ filterFiles: () => false }))
+          .then((callers) => {
+            expect(callers).to.be.empty
+          })
+      })
+    })
+
+    context('and unpackaged files are excluded via "filterPackages"', () => {
+      it('should return promise for empty array', () => {
+        return unpackaged(path.resolve(__dirname, '../'), helpers.createOptions({
+          filterPackages: (pkg) => {
+            return pkg != null
+          }
+        }))
+          .then((callers) => {
+            expect(callers).to.be.empty
+          })
+      })
+    })
   })
 
   context('when synchronous', () => {
     before(() => knockknock.clearCache())
 
-    it('should return caller information', () => {
-      const caller = unpackaged.sync(path.resolve(__dirname, '../'))
+    it('should return callers (excl. packages) before "knocking" file', () => {
+      const callers = unpackaged.sync(path.resolve(__dirname, '../'), helpers.createOptions())
 
-      expect(caller).to.deep.equal({
+      expect(callers).to.have.lengthOf(1)
+      expect(callers[0]).to.deep.equal({
         column: 14,
         file: path.join(tempDirPath, 'src', 'unpackaged.js'),
         line: 31,
@@ -95,7 +145,55 @@ describe('knockknock:fixture:unpackaged', () => {
       })
     })
 
-    // TODO: #7 Add tests covering use of "filterFiles" for unpackaged file
-    // TODO: #7 Add test covering use of "filterPackages" for unpackaged file
+    context('and limited to a single caller via "limit"', () => {
+      it('should return only caller (excl. package) before "knocking" file', () => {
+        const callers = unpackaged.sync(path.resolve(__dirname, '../'), helpers.createOptions({ limit: 1 }))
+
+        expect(callers).to.have.lengthOf(1)
+        expect(callers[0]).to.deep.equal({
+          column: 14,
+          file: path.join(tempDirPath, 'src', 'unpackaged.js'),
+          line: 31,
+          name: 'unpackagedSyncFunction',
+          package: null
+        })
+      })
+    })
+
+    context('and file before "knocking" file is excluded via "filterFiles"', () => {
+      it('should return empty array', () => {
+        const callers = unpackaged.sync(path.resolve(__dirname, '../'), helpers.createOptions({
+          filterFiles: (filePath) => {
+            return path.basename(filePath) !== 'unpackaged.js'
+          }
+        }))
+
+        expect(callers).to.be.empty
+      })
+    })
+
+    context('and all files are excluded via "filterFiles"', () => {
+      it('should return empty array', () => {
+        const callers = unpackaged.sync(path.resolve(__dirname, '../'), helpers.createOptions({
+          filterFiles: () => {
+            return false
+          }
+        }))
+
+        expect(callers).to.be.empty
+      })
+    })
+
+    context('and unpackaged files are excluded via "filterPackages"', () => {
+      it('should return empty array', () => {
+        const callers = unpackaged.sync(path.resolve(__dirname, '../'), helpers.createOptions({
+          filterPackages: (pkg) => {
+            return pkg != null
+          }
+        }))
+
+        expect(callers).to.be.empty
+      })
+    })
   })
 })
