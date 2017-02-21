@@ -218,14 +218,10 @@ class KnockKnock {
     /**
      * The call stack captured by this {@link KnockKnock}.
      *
-     * The first 3 frames are excluded from the stack as these will always relate to either this module (i.e.
-     * <code>knockknock.js</code>) or the module that is trying to determine its caller. The <code>offset</cod> option
-     * is then applied on top of this.
-     *
      * @private
      * @type {CallSite[]}
      */
-    this._stack = getStack().slice(3 + this._options.offset)
+    this._stack = this._getStack()
   }
 
   /**
@@ -283,6 +279,25 @@ class KnockKnock {
    */
   hasNext() {
     return this._stack.length > 0 && (this._options.limit == null || this._options.limit > this._callers.length)
+  }
+
+  /**
+   * Caputes the call stack for this {@link KnockKnock}.
+   *
+   * The first 3 frames are excluded from the stack as these will always relate to either this module (i.e.
+   * <code>knockknock.js</code>). All frames at the start of the remaining stack that originated from the same file are
+   * also then excluded as these will be internal from the module that is trying to find its callers. The
+   * <code>offset</code> option is then applied on top of this.
+   *
+   * @return {CallSite[]} The captured call stack.
+   * @private
+   */
+  _getStack() {
+    const stack = getStack().slice(3)
+    const originatorFilePath = stack[0].getFileName()
+    const startIndex = stack.findIndex((frame) => frame.getFileName() !== originatorFilePath)
+
+    return stack.slice(startIndex + this._options.offset)
   }
 
   /**

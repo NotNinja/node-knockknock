@@ -22,11 +22,15 @@
 
 'use strict'
 
+/* eslint "func-names": "off", "no-extra-parens": "off" */
+
 const whoIsThere = require('../../../../src/knockknock')
 
 module.exports = function fooFunction(options) {
-  return whoIsThere(options)
+  return (() => whoIsThere(options))()
 }
 module.exports.sync = function fooSyncFunction(options) {
-  return whoIsThere.sync(options)
+  return (function() {
+    return whoIsThere.sync(options)
+  }())
 }
