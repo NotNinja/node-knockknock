@@ -2,9 +2,9 @@
   "name": "knockknock",
   "version": "0.2.0",
   "description": "Who's there? The modules that just called your code",
-  "homepage": "https://github.com/Skelp/knockknock",
+  "homepage": "https://github.com/Skelp/node-knockknock",
   "bugs": {
-    "url": "https://github.com/Skelp/knockknock/issues"
+    "url": "https://github.com/Skelp/node-knockknock/issues"
   },
   "author": {
     "name": "Alasdair Mercer",
@@ -23,7 +23,7 @@
   ],
   "repository": {
     "type": "git",
-    "url": "https://github.com/Skelp/knockknock.git"
+    "url": "https://github.com/Skelp/node-knockknock.git"
   },
   "dependencies": {
     "callsite": "^1.0.0",
