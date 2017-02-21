@@ -88,6 +88,24 @@ describe('knockknock', () => {
       })
     })
 
+    context('and "offset" is negative', () => {
+      it('should not apply an offset', () => {
+        return internal(helpers.createOptions({ offset: -1 }))
+          .then((callers) => {
+            expect(callers).to.have.lengthOf(2)
+          })
+      })
+    })
+
+    context('and "offset" is greater than size of call stack', () => {
+      it('should return promise for empty array', () => {
+        return internal(helpers.createOptions({ offset: 100 }))
+          .then((callers) => {
+            expect(callers).to.be.empty
+          })
+      })
+    })
+
     context('and "filterPackages" option modifies package', () => {
       it('should have no affect on contained package (#5)', () => {
         return internal(helpers.createOptions({
@@ -143,6 +161,22 @@ describe('knockknock', () => {
     context('and "limit" is zero', () => {
       it('should return empty array', () => {
         const callers = internal.sync(helpers.createOptions({ limit: 0 }))
+
+        expect(callers).to.be.empty
+      })
+    })
+
+    context('and "offset" is negative', () => {
+      it('should not apply an offset', () => {
+        const callers = internal.sync(helpers.createOptions({ offset: -1 }))
+
+        expect(callers).to.have.lengthOf(2)
+      })
+    })
+
+    context('and "offset" is greater than size of call stack', () => {
+      it('should return empty array', () => {
+        const callers = internal.sync(helpers.createOptions({ offset: 100 }))
 
         expect(callers).to.be.empty
       })

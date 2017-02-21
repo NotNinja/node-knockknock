@@ -52,6 +52,15 @@ describe('knockknock:fixture:server', () => {
         })
     })
 
+    context('and first call is skipped via "offset"', () => {
+      it('should return promise for empty array', () => {
+        return server(helpers.createOptions({ offset: 1 }))
+          .then((callers) => {
+            expect(callers).to.be.empty
+          })
+      })
+    })
+
     context('and limited to a single caller via "limit"', () => {
       it('should return promise for only caller (excl. package) before "knocking" file', () => {
         return server(helpers.createOptions({ limit: 1 }))
@@ -129,6 +138,14 @@ describe('knockknock:fixture:server', () => {
           version: '4.0.1'
         }
       }))
+    })
+
+    context('and first call is skipped via "offset"', () => {
+      it('should return promise for empty array', () => {
+        const callers = server.sync(helpers.createOptions({ offset: 1 }))
+
+        expect(callers).to.be.empty
+      })
     })
 
     context('and limited to a single caller via "limit"', () => {

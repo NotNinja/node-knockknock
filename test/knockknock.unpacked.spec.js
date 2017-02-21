@@ -77,6 +77,15 @@ describe('knockknock:fixture:unpackaged', () => {
         })
     })
 
+    context('and first call is skipped via "offset"', () => {
+      it('should return promise for empty array', () => {
+        return unpackaged(path.resolve(__dirname, '../'), helpers.createOptions({ offset: 1 }))
+          .then((callers) => {
+            expect(callers).to.be.empty
+          })
+      })
+    })
+
     context('and limited to a single caller via "limit"', () => {
       it('should return promise for only caller (excl. package) before "knocking" file', () => {
         return unpackaged(path.resolve(__dirname, '../'), helpers.createOptions({ limit: 1 }))
@@ -142,6 +151,14 @@ describe('knockknock:fixture:unpackaged', () => {
         line: 31,
         name: 'unpackagedSyncFunction',
         package: null
+      })
+    })
+
+    context('and first call is skipped via "offset"', () => {
+      it('should return empty array', () => {
+        const callers = unpackaged.sync(path.resolve(__dirname, '../'), helpers.createOptions({ offset: 1 }))
+
+        expect(callers).to.be.empty
       })
     })
 

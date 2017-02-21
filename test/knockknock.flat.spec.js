@@ -53,6 +53,15 @@ describe('knockknock:fixture:flat', () => {
         })
       })
 
+      context('and first call is skipped via "offset"', () => {
+        it('should return promise for empty array', () => {
+          return flat.foo(helpers.createOptions({ offset: 1 }))
+            .then((callers) => {
+              expect(callers).to.be.empty
+            })
+        })
+      })
+
       context('and limited to a single caller via "limit"', () => {
         it('should return promise for only caller (incl. package) before "knocking" file', () => {
           return flat.foo(helpers.createOptions({ limit: 1 }))
@@ -141,6 +150,27 @@ describe('knockknock:fixture:flat', () => {
               }
             }))
           })
+      })
+
+      context('and first call is skipped via "offset"', () => {
+        it('should return promise for callers (incl. package) before file before "knocking" file', () => {
+          return flat.bar(helpers.createOptions({ offset: 1 }))
+            .then((callers) => {
+              expect(callers).to.have.lengthOf(1)
+              expect(callers[0]).to.deep.equal(helpers.resolveCallerForFixture({
+                column: 10,
+                file: 'flat/src/flat.js',
+                line: 29,
+                name: 'flatBarFunction',
+                package: {
+                  directory: 'flat',
+                  main: 'flat/src/flat.js',
+                  name: 'flat',
+                  version: '1.0.1'
+                }
+              }))
+            })
+        })
       })
 
       context('and limited to a single caller via "limit"', () => {
@@ -320,6 +350,14 @@ describe('knockknock:fixture:flat', () => {
         }))
       })
 
+      context('and first call is skipped via "offset"', () => {
+        it('should return empty array', () => {
+          const callers = flat.foo.sync(helpers.createOptions({ offset: 1 }))
+
+          expect(callers).to.be.empty
+        })
+      })
+
       context('and limited to a single caller via "limit"', () => {
         it('should return only caller (incl. package) before "knocking" file', () => {
           const callers = flat.foo.sync(helpers.createOptions({ limit: 1 }))
@@ -406,6 +444,26 @@ describe('knockknock:fixture:flat', () => {
             version: '1.0.1'
           }
         }))
+      })
+
+      context('and first call is skipped via "offset"', () => {
+        it('should return callers (incl. package) before file before "knocking" file', () => {
+          const callers = flat.bar.sync(helpers.createOptions({ offset: 1 }))
+
+          expect(callers).to.have.lengthOf(1)
+          expect(callers[0]).to.deep.equal(helpers.resolveCallerForFixture({
+            column: 14,
+            file: 'flat/src/flat.js',
+            line: 32,
+            name: 'flatBarSyncFunction',
+            package: {
+              directory: 'flat',
+              main: 'flat/src/flat.js',
+              name: 'flat',
+              version: '1.0.1'
+            }
+          }))
+        })
       })
 
       context('and limited to a single caller via "limit"', () => {

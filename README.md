@@ -73,6 +73,7 @@ The `options` parameter is entirely optional and supports the following:
 | `filterFiles`    | A function called to filter files based on their path. Only called for files whose containing package (if any) is also included.          | N/A           |
 | `filterPackages` | A function called to filter files based on the package to which they belong (if any). Only called if package is not listed in `excludes`. | N/A           |
 | `limit`          | The maximum number of callers to be included in the results. No limit is applied when `null`.                                             | `null`        |
+| `offset`         | The number of frames from call stack to be skipped initially.                                                                             | `0`           |
 
 In most cases, you may want to at least exclude your own package so that your own package-internal calls are ignored via
 `excludes` or `filterPackages`.

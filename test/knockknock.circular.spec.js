@@ -76,6 +76,39 @@ describe('knockknock:fixture:circular', () => {
         })
     })
 
+    context('and first call is skipped via "offset"', () => {
+      it('should return promise for callers (incl. package) before file before "knocking" file', () => {
+        return circular(helpers.createOptions({ offset: 1 }))
+          .then((callers) => {
+            expect(callers).to.have.lengthOf(2)
+            expect(callers[0]).to.deep.equal(helpers.resolveCallerForFixture({
+              column: 26,
+              file: 'circular/src/foo.js',
+              line: 26,
+              name: 'circularFooFunction',
+              package: {
+                directory: 'circular',
+                main: 'circular/src/circular.js',
+                name: 'circular',
+                version: '0.0.1'
+              }
+            }))
+            expect(callers[1]).to.deep.equal(helpers.resolveCallerForFixture({
+              column: 26,
+              file: 'circular/src/circular.js',
+              line: 28,
+              name: 'circularFunction',
+              package: {
+                directory: 'circular',
+                main: 'circular/src/circular.js',
+                name: 'circular',
+                version: '0.0.1'
+              }
+            }))
+          })
+      })
+    })
+
     context('and limited to a single caller via "limit"', () => {
       it('should return promise for only caller (incl. package) before "knocking" file', () => {
         return circular(helpers.createOptions({ limit: 1 }))
@@ -226,6 +259,38 @@ describe('knockknock:fixture:circular', () => {
           version: '0.0.1'
         }
       }))
+    })
+
+    context('and first call is skipped via "offset"', () => {
+      it('should return promise for callers (incl. package) before file before "knocking" file', () => {
+        const callers = circular.sync(helpers.createOptions({ offset: 1 }))
+
+        expect(callers).to.have.lengthOf(2)
+        expect(callers[0]).to.deep.equal(helpers.resolveCallerForFixture({
+          column: 27,
+          file: 'circular/src/foo.js',
+          line: 29,
+          name: 'circularFooSyncFunction',
+          package: {
+            directory: 'circular',
+            main: 'circular/src/circular.js',
+            name: 'circular',
+            version: '0.0.1'
+          }
+        }))
+        expect(callers[1]).to.deep.equal(helpers.resolveCallerForFixture({
+          column: 27,
+          file: 'circular/src/circular.js',
+          line: 31,
+          name: 'circularSyncFunction',
+          package: {
+            directory: 'circular',
+            main: 'circular/src/circular.js',
+            name: 'circular',
+            version: '0.0.1'
+          }
+        }))
+      })
     })
 
     context('and limited to a single caller via "limit"', () => {

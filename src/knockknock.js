@@ -174,7 +174,8 @@ class KnockKnock {
       excludes,
       filterFiles: options.filterFiles,
       filterPackages: options.filterPackages,
-      limit: options.limit != null ? Math.max(0, options.limit) : null
+      limit: options.limit != null ? Math.max(0, options.limit) : null,
+      offset: options.offset != null ? Math.max(0, options.offset) : 0
     }
   }
 
@@ -218,12 +219,13 @@ class KnockKnock {
      * The call stack captured by this {@link KnockKnock}.
      *
      * The first 3 frames are excluded from the stack as these will always relate to either this module (i.e.
-     * <code>knockknock.js</code>) or the module that is trying to determine its caller.
+     * <code>knockknock.js</code>) or the module that is trying to determine its caller. The <code>offset</cod> option
+     * is then applied on top of this.
      *
      * @private
      * @type {CallSite[]}
      */
-    this._stack = getStack().slice(3)
+    this._stack = getStack().slice(3 + this._options.offset)
   }
 
   /**
@@ -503,4 +505,5 @@ module.exports.version = version
  * <code>excludes</code>.
  * @property {number} [limit] - The maximum number of callers to be included in the results. Information for all
  * filtered callers will be included if this is <code>null</code>.
+ * @property {number} [offset=0] - The number of frames from the call stack to be skipped initially.
  */

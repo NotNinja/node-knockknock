@@ -64,6 +64,27 @@ describe('knockknock:fixture:internal', () => {
         })
     })
 
+    context('and first call is skipped via "offset"', () => {
+      it('should return promise for callers (incl. package) before file before "knocking" file', () => {
+        return internal(helpers.createOptions({ offset: 1 }))
+          .then((callers) => {
+            expect(callers).to.have.lengthOf(1)
+            expect(callers[0]).to.deep.equal(helpers.resolveCallerForFixture({
+              column: 30,
+              file: 'internal/src/internal.js',
+              line: 30,
+              name: 'internalFunction',
+              package: {
+                directory: 'internal',
+                main: 'internal/src/internal',
+                name: 'internal',
+                version: '2.0.1'
+              }
+            }))
+          })
+      })
+    })
+
     context('and limited to a single caller via "limit"', () => {
       it('should return promise for only caller (incl. package) before "knocking" file', () => {
         return internal(helpers.createOptions({ limit: 1 }))
@@ -153,6 +174,26 @@ describe('knockknock:fixture:internal', () => {
           version: '2.0.1'
         }
       }))
+    })
+
+    context('and first call is skipped via "offset"', () => {
+      it('should return callers (incl. package) before file before "knocking" file', () => {
+        const callers = internal.sync(helpers.createOptions({ offset: 1 }))
+
+        expect(callers).to.have.lengthOf(1)
+        expect(callers[0]).to.deep.equal(helpers.resolveCallerForFixture({
+          column: 4,
+          file: 'internal/src/internal.js',
+          line: 35,
+          name: 'internalSyncFunction',
+          package: {
+            directory: 'internal',
+            main: 'internal/src/internal',
+            name: 'internal',
+            version: '2.0.1'
+          }
+        }))
+      })
     })
 
     context('and limited to a single caller via "limit"', () => {

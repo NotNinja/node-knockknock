@@ -39,6 +39,15 @@ describe('knockknock:fixture:single', () => {
         })
     })
 
+    context('and first call is skipped via "offset"', () => {
+      it('should return promise for empty array', () => {
+        return single(helpers.createOptions({ offset: 1 }))
+          .then((callers) => {
+            expect(callers).to.be.empty
+          })
+      })
+    })
+
     context('and limited to a single caller via "limit"', () => {
       it('should return promise for empty array', () => {
         return single(helpers.createOptions({ limit: 1 }))
@@ -83,6 +92,14 @@ describe('knockknock:fixture:single', () => {
       const callers = single.sync(helpers.createOptions())
 
       expect(callers).to.be.empty
+    })
+
+    context('and first call is skipped via "offset"', () => {
+      it('should return promise for empty array', () => {
+        const callers = single.sync(helpers.createOptions({ offset: 1 }))
+
+        expect(callers).to.be.empty
+      })
     })
 
     context('and limited to a single caller via "limit"', () => {
