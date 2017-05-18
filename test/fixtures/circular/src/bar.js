@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Alasdair Mercer, Skelp
+ * Copyright (C) 2017 Alasdair Mercer, !ninja
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -20,11 +20,11 @@
  * SOFTWARE.
  */
 
-'use strict'
+'use strict';
 
 module.exports = function circularBarFunction(options) {
-  return require('./circular').circular(options)
-}
+  return require('./circular').circular(options);
+};
 module.exports.sync = function circularBarSyncFunction(options) {
-  return require('./circular').circular.sync(options)
-}
+  return require('./circular').circular.sync(options);
+};

@@ -8,3 +8,8 @@ script:
   - npm test
 after_script:
   - npm run report-coverage
+notifications:
+  slack:
+    rooms:
+      - secure: uskf4zswsv6BUkraANbOXDlVC+WHA180adLTG3AfDbnLX24BoqefaVY6EvaTQHinIzsbRHqlkd5nsIh0UpeJMzuVz/kLXq6p3KS90nE2USemV+HgH/W6dhPx94EYekYmApv6VevPMjhKJvUsgH+vxEur3GPAXqnoRmXiU6Yr0u5IGW6lqpcGuJRt0sGLrECRMPbSdv/V7BfY95vO3B6hCnhnZ28Z03LMNUdakyGydX8GwT0VJLddhg3iuEaKR//zSgIJABoqQU/DgM/HSbqC55uC4oJSvZ+xtR9E8HhCXKJQAI+CMqErTNjATCIa2PkE3pEsqbMXEKM6bZadg01nKlbq+i82GlR0vtJIH5/4AKJ93dWG5D8tQbtT52+URb8EgYr71TT0RJUg8igtzmM2lpM1ByxhXIOEp/nRhc13dukmlS8lLr5EDQY4m/cnWQv4eYbXCM89gcCCw7IZ5Fnh+4TLp3BSVX/MIsX2rQym9Eb3ueFIBALeM/rNX2874Vk9aCeXkA09OiQ2ck7E3to/c6UDsucaLzNlI1xCH2ahxP6qF2BKntEvEXLQY/mVK8jcxHpfq6i4ztbBxwcazJ4DeMSeDe+u2J8X8hv9KkIAw9Yf3hvyTWwSbSqjEQcBU4aUMOkLLZlzGXGejvwkeLfnxwN/6ZtAGJQ9JasSCPY67Ow=
+    on_success: change

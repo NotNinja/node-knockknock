@@ -1,16 +1,18 @@
 {
-  "extends": "skelp/v3/es6",
+  "extends": "notninja/es6",
   "env": {
     "node": true
   },
   "rules": {
+    "func-name-matching": "off",
     "func-names": [
       "error",
       "always"
     ],
     "global-require": "off",
     "no-use-before-define": [
-      "error", {
+      "error",
+      {
         "functions": false
       }
     ]
