@@ -1,3 +1,9 @@
+## Version 0.3.0, 2017.05.18
+
+* Rename AUTORS.md file [#12](https://github.com/NotNinja/node-knockknock/issues/12)
+* Move to !ninja [#13](https://github.com/NotNinja/node-knockknock/issues/13)
+* Switch to Codecov for code coverage [#14](https://github.com/NotNinja/node-knockknock/issues/14)
+
 ## Version 0.2.0, 2017.02.21
 
 * Add filterPackages option for more granular control over package exclusion [#5](https://github.com/NotNinja/node-knockknock/issues/5)

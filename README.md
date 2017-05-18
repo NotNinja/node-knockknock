@@ -148,7 +148,7 @@ The current version of KnockKnock.
 const whoIsThere = require('knockknock');
 
 whoIsThere.version;
-=> "0.2.0"
+=> "0.3.0"
 ```
 
 ## Bugs

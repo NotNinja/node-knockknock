@@ -1,6 +1,6 @@
 {
   "name": "knockknock",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "Who's there? The modules that just called your code",
   "homepage": "https://github.com/NotNinja/node-knockknock",
   "bugs": {
