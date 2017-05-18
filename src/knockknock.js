@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Alasdair Mercer, Skelp
+ * Copyright (C) 2017 Alasdair Mercer, !ninja
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -20,14 +20,14 @@
  * SOFTWARE.
  */
 
-'use strict'
+'use strict';
 
-const debug = require('debug')('knockknock')
-const getStack = require('callsite')
-const path = require('path')
-const pkgDir = require('pkg-dir')
+const debug = require('debug')('knockknock');
+const getStack = require('callsite');
+const path = require('path');
+const pkgDir = require('pkg-dir');
 
-const version = require('../package.json').version
+const version = require('../package.json').version;
 
 /**
  * A cache containing packages mapped to file paths.
@@ -37,7 +37,7 @@ const version = require('../package.json').version
  * @private
  * @type {Map.<string, knockknock~Package>}
  */
-const packageCache = new Map()
+const packageCache = new Map();
 
 /**
  * Analyzes each frame in the call stack, finds out as much information about the callers as possible, and filters out
@@ -66,7 +66,7 @@ class KnockKnock {
       line: frame.getLineNumber(),
       name: frame.getFunctionName() || '<anonymous>',
       package: pkg ? Object.assign({}, pkg) : null
-    }
+    };
   }
 
   /**
@@ -85,7 +85,7 @@ class KnockKnock {
    * @static
    */
   static _findPackageDirectory(filePath, callback) {
-    return pkgDir(filePath).then(callback)
+    return pkgDir(filePath).then(callback);
   }
 
   /**
@@ -103,7 +103,7 @@ class KnockKnock {
    * @static
    */
   static _findPackageDirectorySync(filePath, callback) {
-    return callback(pkgDir.sync(filePath))
+    return callback(pkgDir.sync(filePath));
   }
 
   /**
@@ -122,16 +122,16 @@ class KnockKnock {
    * @static
    */
   static _getPackage(dirPath) {
-    debug('Attempting to retrieve information for package installed in directory: %s', dirPath)
+    debug('Attempting to retrieve information for package installed in directory: %s', dirPath);
 
-    const pkg = require(path.join(dirPath, 'package.json'))
+    const pkg = require(path.join(dirPath, 'package.json'));
 
     return {
       directory: dirPath,
       main: pkg.main ? path.join(dirPath, pkg.main) : null,
       name: pkg.name,
       version: pkg.version
-    }
+    };
   }
 
   /**
@@ -147,7 +147,7 @@ class KnockKnock {
    * @static
    */
   static _isInternal(filePath) {
-    return filePath === module.filename || !path.isAbsolute(filePath)
+    return filePath === module.filename || !path.isAbsolute(filePath);
   }
 
   /**
@@ -162,12 +162,12 @@ class KnockKnock {
    */
   static _parseOptions(options) {
     if (!options) {
-      options = {}
+      options = {};
     }
 
-    let excludes = [ 'knockknock' ]
+    let excludes = [ 'knockknock' ];
     if (options.excludes) {
-      excludes = excludes.concat(options.excludes)
+      excludes = excludes.concat(options.excludes);
     }
 
     return {
@@ -176,7 +176,7 @@ class KnockKnock {
       filterPackages: options.filterPackages,
       limit: options.limit != null ? Math.max(0, options.limit) : null,
       offset: options.offset != null ? Math.max(0, options.offset) : 0
-    }
+    };
   }
 
   /**
@@ -197,7 +197,7 @@ class KnockKnock {
      * @private
      * @type {boolean}
      */
-    this._sync = sync
+    this._sync = sync;
 
     /**
      * The parsed options for this {@link KnockKnock}.
@@ -205,7 +205,7 @@ class KnockKnock {
      * @private
      * @type {knockknock~Options}
      */
-    this._options = KnockKnock._parseOptions(options)
+    this._options = KnockKnock._parseOptions(options);
 
     /**
      * The information for all filtered callers found by this {@link KnockKnock}.
@@ -213,7 +213,7 @@ class KnockKnock {
      * @private
      * @type {knockknock~Caller[]}
      */
-    this._callers = []
+    this._callers = [];
 
     /**
      * The call stack captured by this {@link KnockKnock}.
@@ -221,7 +221,7 @@ class KnockKnock {
      * @private
      * @type {CallSite[]}
      */
-    this._stack = this._getStack()
+    this._stack = this._getStack();
   }
 
   /**
@@ -242,32 +242,32 @@ class KnockKnock {
    */
   find() {
     if (!this.hasNext()) {
-      return this._callers
+      return this._callers;
     }
 
-    const frame = this._stack.shift()
-    const filePath = frame.getFileName()
+    const frame = this._stack.shift();
+    const filePath = frame.getFileName();
 
     if (KnockKnock._isInternal(filePath)) {
-      debug('Skipping call from internal file: %s', filePath)
+      debug('Skipping call from internal file: %s', filePath);
 
-      return this.find()
+      return this.find();
     }
 
     if (packageCache.has(filePath)) {
-      return this._handleFile(filePath, packageCache.get(filePath), frame)
+      return this._handleFile(filePath, packageCache.get(filePath), frame);
     }
 
-    debug('Attempting to find installation directory for package containing file: %s', filePath)
+    debug('Attempting to find installation directory for package containing file: %s', filePath);
 
-    const packageDirFinder = KnockKnock[this._sync ? '_findPackageDirectorySync' : '_findPackageDirectory']
+    const packageDirFinder = KnockKnock[this._sync ? '_findPackageDirectorySync' : '_findPackageDirectory'];
     return packageDirFinder(filePath, (dirPath) => {
-      const pkg = dirPath != null ? KnockKnock._getPackage(dirPath) : null
+      const pkg = dirPath != null ? KnockKnock._getPackage(dirPath) : null;
 
-      packageCache.set(filePath, pkg)
+      packageCache.set(filePath, pkg);
 
-      return this._handleFile(filePath, pkg, frame)
-    })
+      return this._handleFile(filePath, pkg, frame);
+    });
   }
 
   /**
@@ -278,7 +278,7 @@ class KnockKnock {
    * @public
    */
   hasNext() {
-    return this._stack.length > 0 && (this._options.limit == null || this._options.limit > this._callers.length)
+    return this._stack.length > 0 && (this._options.limit == null || this._options.limit > this._callers.length);
   }
 
   /**
@@ -293,11 +293,11 @@ class KnockKnock {
    * @private
    */
   _getStack() {
-    const stack = getStack().slice(3)
-    const originatorFilePath = stack[0].getFileName()
-    const startIndex = stack.findIndex((frame) => frame.getFileName() !== originatorFilePath)
+    const stack = getStack().slice(3);
+    const originatorFilePath = stack[0].getFileName();
+    const startIndex = stack.findIndex((frame) => frame.getFileName() !== originatorFilePath);
 
-    return stack.slice(startIndex + this._options.offset)
+    return stack.slice(startIndex + this._options.offset);
   }
 
   /**
@@ -323,20 +323,20 @@ class KnockKnock {
    */
   _handleFile(filePath, pkg, frame) {
     if (pkg == null) {
-      debug('Unable to find package containing file: %s', filePath)
+      debug('Unable to find package containing file: %s', filePath);
     } else {
-      debug('Found package "%s" containing file: %s', pkg.name, filePath)
+      debug('Found package "%s" containing file: %s', pkg.name, filePath);
     }
 
     if (!this._isPackageIncluded(pkg)) {
-      debug('Skipping call within package %s from file: %s', pkg ? `"${pkg.name}"` : '<unknown>', filePath)
+      debug('Skipping call within package %s from file: %s', pkg ? `"${pkg.name}"` : '<unknown>', filePath);
     } else if (!this._isFileIncluded(filePath)) {
-      debug('Skipping call from file: %s', filePath)
+      debug('Skipping call from file: %s', filePath);
     } else {
-      this._callers.push(KnockKnock._buildCaller(filePath, pkg, frame))
+      this._callers.push(KnockKnock._buildCaller(filePath, pkg, frame));
     }
 
-    return this.find()
+    return this.find();
   }
 
   /**
@@ -350,7 +350,7 @@ class KnockKnock {
    * @private
    */
   _isFileIncluded(filePath) {
-    return !this._options.filterFiles || this._options.filterFiles(filePath)
+    return !this._options.filterFiles || this._options.filterFiles(filePath);
   }
 
   /**
@@ -366,10 +366,10 @@ class KnockKnock {
    */
   _isPackageIncluded(pkg) {
     if (pkg && this._options.excludes.indexOf(pkg.name) >= 0) {
-      return false
+      return false;
     }
 
-    return !this._options.filterPackages || this._options.filterPackages(pkg ? Object.assign({}, pkg) : null)
+    return !this._options.filterPackages || this._options.filterPackages(pkg ? Object.assign({}, pkg) : null);
   }
 
 }
@@ -396,8 +396,8 @@ class KnockKnock {
  * @static
  */
 module.exports = function whoIsThere(options) {
-  return Promise.resolve(new KnockKnock(false, options).find())
-}
+  return Promise.resolve(new KnockKnock(false, options).find());
+};
 
 /**
  * Clears the cache containing packages mapped to file paths which is used to speed up package lookups for repeat
@@ -410,8 +410,8 @@ module.exports = function whoIsThere(options) {
  * @static
  */
 module.exports.clearCache = function clearCache() {
-  packageCache.clear()
-}
+  packageCache.clear();
+};
 
 /**
  * Generates a call stack and analyzes each frame to find out as much information as possible on the files responsible
@@ -434,8 +434,8 @@ module.exports.clearCache = function clearCache() {
  * @static
  */
 module.exports.sync = function whoIsThereSync(options) {
-  return new KnockKnock(true, options).find()
-}
+  return new KnockKnock(true, options).find();
+};
 
 /**
  * The current version of KnockKnock.
@@ -444,7 +444,7 @@ module.exports.sync = function whoIsThereSync(options) {
  * @static
  * @type {string}
  */
-module.exports.version = version
+module.exports.version = version;
 
 /**
  * Called with path of the file responsible for the current call that is being processed to allow consumers to make a

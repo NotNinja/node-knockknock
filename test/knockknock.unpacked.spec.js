@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Alasdair Mercer, Skelp
+ * Copyright (C) 2017 Alasdair Mercer, !ninja
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -20,197 +20,197 @@
  * SOFTWARE.
  */
 
-'use strict'
+'use strict';
 
-const expect = require('chai').expect
-const ncp = require('ncp').ncp
-const path = require('path')
-const tmp = require('tmp')
+const expect = require('chai').expect;
+const ncp = require('ncp').ncp;
+const path = require('path');
+const tmp = require('tmp');
 
-const helpers = require('./helpers')
-const knockknock = require('../src/knockknock')
+const helpers = require('./helpers');
+const knockknock = require('../src/knockknock');
 
 describe('knockknock:fixture:unpackaged', () => {
-  let tempDirPath
-  let unpackaged
+  let tempDirPath;
+  let unpackaged;
 
   before((done) => {
-    tmp.setGracefulCleanup()
+    tmp.setGracefulCleanup();
 
     tmp.dir((error, dirPath) => {
       if (error) {
-        return done(error)
+        return done(error);
       }
 
-      tempDirPath = dirPath
+      tempDirPath = dirPath;
 
-      return done()
-    })
-  })
+      return done();
+    });
+  });
 
   before((done) => {
     ncp(path.join(__dirname, 'fixtures', 'unpackaged'), tempDirPath, (error) => {
       if (error) {
-        return done(error)
+        return done(error);
       }
 
-      unpackaged = require(path.join(tempDirPath, 'src', 'unpackaged'))
+      unpackaged = require(path.join(tempDirPath, 'src', 'unpackaged'));
 
-      return done()
-    })
-  })
+      return done();
+    });
+  });
 
   context('when asynchronous', () => {
-    before(() => knockknock.clearCache())
+    before(() => knockknock.clearCache());
 
     it('should return promise for callers (excl. packages) before "knocking" file', () => {
       return unpackaged(path.resolve(__dirname, '../'), helpers.createOptions())
         .then((callers) => {
-          expect(callers).to.have.lengthOf(1)
+          expect(callers).to.have.lengthOf(1);
           expect(callers[0]).to.deep.equal({
             column: 10,
             file: path.join(tempDirPath, 'src', 'unpackaged.js'),
             line: 28,
             name: 'unpackagedFunction',
             package: null
-          })
-        })
-    })
+          });
+        });
+    });
 
     context('and first call is skipped via "offset"', () => {
       it('should return promise for empty array', () => {
         return unpackaged(path.resolve(__dirname, '../'), helpers.createOptions({ offset: 1 }))
           .then((callers) => {
-            expect(callers).to.be.empty
-          })
-      })
-    })
+            expect(callers).to.be.empty;
+          });
+      });
+    });
 
     context('and limited to a single caller via "limit"', () => {
       it('should return promise for only caller (excl. package) before "knocking" file', () => {
         return unpackaged(path.resolve(__dirname, '../'), helpers.createOptions({ limit: 1 }))
           .then((callers) => {
-            expect(callers).to.have.lengthOf(1)
+            expect(callers).to.have.lengthOf(1);
             expect(callers[0]).to.deep.equal({
               column: 10,
               file: path.join(tempDirPath, 'src', 'unpackaged.js'),
               line: 28,
               name: 'unpackagedFunction',
               package: null
-            })
-          })
-      })
-    })
+            });
+          });
+      });
+    });
 
     context('and file before "knocking" file is excluded via "filterFiles"', () => {
       it('should return promise for empty array', () => {
         return unpackaged(path.resolve(__dirname, '../'), helpers.createOptions({
           filterFiles: (filePath) => {
-            return path.basename(filePath) !== 'unpackaged.js'
+            return path.basename(filePath) !== 'unpackaged.js';
           }
         }))
           .then((callers) => {
-            expect(callers).to.be.empty
-          })
-      })
-    })
+            expect(callers).to.be.empty;
+          });
+      });
+    });
 
     context('and all files are excluded via "filterFiles"', () => {
       it('should return promise for empty array', () => {
         return unpackaged(path.resolve(__dirname, '../'), helpers.createOptions({ filterFiles: () => false }))
           .then((callers) => {
-            expect(callers).to.be.empty
-          })
-      })
-    })
+            expect(callers).to.be.empty;
+          });
+      });
+    });
 
     context('and unpackaged files are excluded via "filterPackages"', () => {
       it('should return promise for empty array', () => {
         return unpackaged(path.resolve(__dirname, '../'), helpers.createOptions({
           filterPackages: (pkg) => {
-            return pkg != null
+            return pkg != null;
           }
         }))
           .then((callers) => {
-            expect(callers).to.be.empty
-          })
-      })
-    })
-  })
+            expect(callers).to.be.empty;
+          });
+      });
+    });
+  });
 
   context('when synchronous', () => {
-    before(() => knockknock.clearCache())
+    before(() => knockknock.clearCache());
 
     it('should return callers (excl. packages) before "knocking" file', () => {
-      const callers = unpackaged.sync(path.resolve(__dirname, '../'), helpers.createOptions())
+      const callers = unpackaged.sync(path.resolve(__dirname, '../'), helpers.createOptions());
 
-      expect(callers).to.have.lengthOf(1)
+      expect(callers).to.have.lengthOf(1);
       expect(callers[0]).to.deep.equal({
         column: 14,
         file: path.join(tempDirPath, 'src', 'unpackaged.js'),
         line: 31,
         name: 'unpackagedSyncFunction',
         package: null
-      })
-    })
+      });
+    });
 
     context('and first call is skipped via "offset"', () => {
       it('should return empty array', () => {
-        const callers = unpackaged.sync(path.resolve(__dirname, '../'), helpers.createOptions({ offset: 1 }))
+        const callers = unpackaged.sync(path.resolve(__dirname, '../'), helpers.createOptions({ offset: 1 }));
 
-        expect(callers).to.be.empty
-      })
-    })
+        expect(callers).to.be.empty;
+      });
+    });
 
     context('and limited to a single caller via "limit"', () => {
       it('should return only caller (excl. package) before "knocking" file', () => {
-        const callers = unpackaged.sync(path.resolve(__dirname, '../'), helpers.createOptions({ limit: 1 }))
+        const callers = unpackaged.sync(path.resolve(__dirname, '../'), helpers.createOptions({ limit: 1 }));
 
-        expect(callers).to.have.lengthOf(1)
+        expect(callers).to.have.lengthOf(1);
         expect(callers[0]).to.deep.equal({
           column: 14,
           file: path.join(tempDirPath, 'src', 'unpackaged.js'),
           line: 31,
           name: 'unpackagedSyncFunction',
           package: null
-        })
-      })
-    })
+        });
+      });
+    });
 
     context('and file before "knocking" file is excluded via "filterFiles"', () => {
       it('should return empty array', () => {
         const callers = unpackaged.sync(path.resolve(__dirname, '../'), helpers.createOptions({
           filterFiles: (filePath) => {
-            return path.basename(filePath) !== 'unpackaged.js'
+            return path.basename(filePath) !== 'unpackaged.js';
           }
-        }))
+        }));
 
-        expect(callers).to.be.empty
-      })
-    })
+        expect(callers).to.be.empty;
+      });
+    });
 
     context('and all files are excluded via "filterFiles"', () => {
       it('should return empty array', () => {
         const callers = unpackaged.sync(path.resolve(__dirname, '../'), helpers.createOptions({
           filterFiles: () => {
-            return false
+            return false;
           }
-        }))
+        }));
 
-        expect(callers).to.be.empty
-      })
-    })
+        expect(callers).to.be.empty;
+      });
+    });
 
     context('and unpackaged files are excluded via "filterPackages"', () => {
       it('should return empty array', () => {
         const callers = unpackaged.sync(path.resolve(__dirname, '../'), helpers.createOptions({
           filterPackages: (pkg) => {
-            return pkg != null
+            return pkg != null;
           }
-        }))
+        }));
 
-        expect(callers).to.be.empty
-      })
-    })
-  })
-})
+        expect(callers).to.be.empty;
+      });
+    });
+  });
+});

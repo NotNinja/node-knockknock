@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Alasdair Mercer, Skelp
+ * Copyright (C) 2017 Alasdair Mercer, !ninja
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -20,9 +20,9 @@
  * SOFTWARE.
  */
 
-'use strict'
+'use strict';
 
-const path = require('path')
+const path = require('path');
 
 /**
  * Creates options to be used by tests.
@@ -35,13 +35,13 @@ const path = require('path')
  */
 exports.createOptions = function createOptions(options) {
   if (!options) {
-    options = {}
+    options = {};
   }
 
-  options.excludes = [ 'mocha' ].concat(options.excludes || [])
+  options.excludes = [ 'mocha' ].concat(options.excludes || []);
 
-  return options
-}
+  return options;
+};
 
 /**
  * Resolves all file paths on the specified <code>caller</code> to the <code>fixtures</code> directory so that they are
@@ -52,17 +52,17 @@ exports.createOptions = function createOptions(options) {
  * @public
  */
 exports.resolveCallerForFixture = function resolveCallerForFixture(caller) {
-  const dirPath = path.join(__dirname, 'fixtures')
-  const pkg = caller.package
+  const dirPath = path.join(__dirname, 'fixtures');
+  const pkg = caller.package;
 
-  caller.file = path.resolve(dirPath, caller.file)
+  caller.file = path.resolve(dirPath, caller.file);
 
   if (pkg) {
-    pkg.directory = path.resolve(dirPath, pkg.directory)
+    pkg.directory = path.resolve(dirPath, pkg.directory);
     if (pkg.main) {
-      pkg.main = path.resolve(dirPath, pkg.main)
+      pkg.main = path.resolve(dirPath, pkg.main);
     }
   }
 
-  return caller
-}
+  return caller;
+};

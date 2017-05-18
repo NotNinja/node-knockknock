@@ -10,14 +10,14 @@
 Who's there?  
 The modules that just called your code.
 
-[KnockKnock](https://github.com/Skelp/node-knockknock) provides information about the files, functions, and packages that
-were responsible for calling your module.
+[KnockKnock](https://github.com/NotNinja/node-knockknock) provides information about the files, functions, and packages
+that were responsible for calling your module.
 
-[![Build](https://img.shields.io/travis/Skelp/node-knockknock/develop.svg?style=flat-square)](https://travis-ci.org/Skelp/node-knockknock)
-[![Coverage](https://img.shields.io/coveralls/Skelp/node-knockknock/develop.svg?style=flat-square)](https://coveralls.io/github/Skelp/node-knockknock)
-[![Dependencies](https://img.shields.io/david/Skelp/node-knockknock.svg?style=flat-square)](https://david-dm.org/Skelp/node-knockknock)
-[![Dev Dependencies](https://img.shields.io/david/dev/Skelp/node-knockknock.svg?style=flat-square)](https://david-dm.org/Skelp/node-knockknock#info=devDependencies)
-[![License](https://img.shields.io/npm/l/knockknock.svg?style=flat-square)](https://github.com/Skelp/node-knockknock/blob/master/LICENSE.md)
+[![Build](https://img.shields.io/travis/NotNinja/node-knockknock/develop.svg?style=flat-square)](https://travis-ci.org/NotNinja/node-knockknock)
+[![Coverage](https://img.shields.io/codecov/c/github/NotNinja/node-knockknock/develop.svg?style=flat-square)](https://codecov.io/gh/NotNinja/node-knockknock)
+[![Dependencies](https://img.shields.io/david/NotNinja/node-knockknock.svg?style=flat-square)](https://david-dm.org/NotNinja/node-knockknock)
+[![Dev Dependencies](https://img.shields.io/david/dev/NotNinja/node-knockknock.svg?style=flat-square)](https://david-dm.org/NotNinja/node-knockknock?type=dev)
+[![License](https://img.shields.io/npm/l/knockknock.svg?style=flat-square)](https://github.com/NotNinja/node-knockknock/blob/master/LICENSE.md)
 [![Release](https://img.shields.io/npm/v/knockknock.svg?style=flat-square)](https://www.npmjs.com/package/knockknock)
 
 * [Install](#install)
@@ -79,43 +79,43 @@ In most cases, you may want to at least exclude your own package so that your ow
 `excludes` or `filterPackages`.
 
 ``` javascript
-const whoIsThere = require('knockknock')
+const whoIsThere = require('knockknock');
 
 module.exports = function() {
   return whoIsThere({ excludes: 'my-example-package' })
     .then((callers) => {
       if (callers.length > 0) {
-        console.log(`Called from ${callers.length} modules`)
+        console.log(`Called from ${callers.length} modules`);
 
         // ...
       } else {
-        console.log('Called from unknown module')
+        console.log('Called from unknown module');
 
         // ...
       }
-    })
-}
+    });
+};
 ```
 
 The `limit` option works great if you only want to know about the last caller:
 
 ``` javascript
-const whoIsThere = require('knockknock')
+const whoIsThere = require('knockknock');
 
 module.exports = function() {
   return whoIsThere({ excludes: 'my-example-package', limit: 1 })
     .then((callers) => {
       if (callers.length === 1) {
-        console.log(`Called from module "${callers[0].file}" in package "${callers[0].package ? callers[0].package.name : '<unknown>'}"`)
+        console.log(`Called from module "${callers[0].file}" in package "${callers[0].package ? callers[0].package.name : '<unknown>'}"`);
 
         // ...
       } else {
-        console.log('Called from unknown module')
+        console.log('Called from unknown module');
 
         // ...
       }
-    })
-}
+    });
+};
 ```
 
 ### `knockknock.sync([options])`
@@ -123,21 +123,21 @@ module.exports = function() {
 A synchronous alternative to `knockknock([options])`.
 
 ``` javascript
-const whoIsThere = require('knockknock')
+const whoIsThere = require('knockknock');
 
 module.exports = function() {
-  const callers = whoIsThere.sync({ excludes: 'my-example-package' })
+  const callers = whoIsThere.sync({ excludes: 'my-example-package' });
 
   if (callers.length > 0) {
-    console.log(`Called from ${callers.length} modules`)
+    console.log(`Called from ${callers.length} modules`);
 
     // ...
   } else {
-    console.log('Called from unknown module')
+    console.log('Called from unknown module');
 
     // ...
   }
-}
+};
 ```
 
 ### `knockknock.version`
@@ -145,30 +145,29 @@ module.exports = function() {
 The current version of KnockKnock.
 
 ``` javascript
-const whoIsThere = require('knockknock')
+const whoIsThere = require('knockknock');
 
-whoIsThere.version
-=> "0.2.0"
+whoIsThere.version;
+=> "0.3.0"
 ```
 
 ## Bugs
 
 If you have any problems with KnockKnock or would like to see changes currently in development you can do so
-[here](https://github.com/Skelp/node-knockknock/issues).
+[here](https://github.com/NotNinja/node-knockknock/issues).
 
 ## Contributors
 
 If you want to contribute, you're a legend! Information on how you can do so can be found in
-[CONTRIBUTING.md](https://github.com/Skelp/node-knockknock/blob/master/CONTRIBUTING.md). We want your suggestions and
+[CONTRIBUTING.md](https://github.com/NotNinja/node-knockknock/blob/master/CONTRIBUTING.md). We want your suggestions and
 pull requests!
 
 A list of KnockKnock contributors can be found in
-[AUTHORS.md](https://github.com/Skelp/node-knockknock/blob/master/AUTHORS.md).
+[AUTHORS.md](https://github.com/NotNinja/node-knockknock/blob/master/AUTHORS.md).
 
 ## License
 
-See [LICENSE.md](https://github.com/Skelp/node-knockknock/raw/master/LICENSE.md) for more information on our MIT
+See [LICENSE.md](https://github.com/NotNinja/node-knockknock/raw/master/LICENSE.md) for more information on our MIT
 license.
 
-© 2017 [Skelp](https://skelp.io)
-<img align="right" width="16" height="16" src="https://cdn.rawgit.com/Skelp/skelp-branding/master/assets/logo/base/skelp-logo-16x16.png">
+[![Copyright !ninja](https://cdn.rawgit.com/NotNinja/branding/master/assets/copyright/base/not-ninja-copyright-186x25.png)](https://not.ninja)

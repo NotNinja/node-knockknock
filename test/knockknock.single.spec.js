@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Alasdair Mercer, Skelp
+ * Copyright (C) 2017 Alasdair Mercer, !ninja
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -20,118 +20,118 @@
  * SOFTWARE.
  */
 
-'use strict'
+'use strict';
 
-const expect = require('chai').expect
+const expect = require('chai').expect;
 
-const helpers = require('./helpers')
-const knockknock = require('../src/knockknock')
-const single = require('./fixtures/single/src/single')
+const helpers = require('./helpers');
+const knockknock = require('../src/knockknock');
+const single = require('./fixtures/single/src/single');
 
 describe('knockknock:fixture:single', () => {
   context('when asynchronous', () => {
-    before(() => knockknock.clearCache())
+    before(() => knockknock.clearCache());
 
     it('should return promise for empty array', () => {
       return single(helpers.createOptions())
         .then((callers) => {
-          expect(callers).to.be.empty
-        })
-    })
+          expect(callers).to.be.empty;
+        });
+    });
 
     context('and first call is skipped via "offset"', () => {
       it('should return promise for empty array', () => {
         return single(helpers.createOptions({ offset: 1 }))
           .then((callers) => {
-            expect(callers).to.be.empty
-          })
-      })
-    })
+            expect(callers).to.be.empty;
+          });
+      });
+    });
 
     context('and limited to a single caller via "limit"', () => {
       it('should return promise for empty array', () => {
         return single(helpers.createOptions({ limit: 1 }))
           .then((callers) => {
-            expect(callers).to.be.empty
-          })
-      })
-    })
+            expect(callers).to.be.empty;
+          });
+      });
+    });
 
     context('and all files are excluded via "filterFiles"', () => {
       it('should return promise for empty array', () => {
         return single(helpers.createOptions({ filterFiles: () => false }))
           .then((callers) => {
-            expect(callers).to.be.empty
-          })
-      })
-    })
+            expect(callers).to.be.empty;
+          });
+      });
+    });
 
     context('and package is excluded via "excludes"', () => {
       it('should return promise for empty array', () => {
         return single(helpers.createOptions({ excludes: 'single' }))
           .then((callers) => {
-            expect(callers).to.be.empty
-          })
-      })
-    })
+            expect(callers).to.be.empty;
+          });
+      });
+    });
 
     context('and package is excluded via "filterPackages"', () => {
       it('should return promise for empty array', () => {
         return single(helpers.createOptions({ filterPackages: (pkg) => pkg.name !== 'single' }))
           .then((callers) => {
-            expect(callers).to.be.empty
-          })
-      })
-    })
-  })
+            expect(callers).to.be.empty;
+          });
+      });
+    });
+  });
 
   context('when synchronous', () => {
-    before(() => knockknock.clearCache())
+    before(() => knockknock.clearCache());
 
     it('should return empty array', () => {
-      const callers = single.sync(helpers.createOptions())
+      const callers = single.sync(helpers.createOptions());
 
-      expect(callers).to.be.empty
-    })
+      expect(callers).to.be.empty;
+    });
 
     context('and first call is skipped via "offset"', () => {
       it('should return promise for empty array', () => {
-        const callers = single.sync(helpers.createOptions({ offset: 1 }))
+        const callers = single.sync(helpers.createOptions({ offset: 1 }));
 
-        expect(callers).to.be.empty
-      })
-    })
+        expect(callers).to.be.empty;
+      });
+    });
 
     context('and limited to a single caller via "limit"', () => {
       it('should return promise for empty array', () => {
-        const callers = single.sync(helpers.createOptions({ limit: 1 }))
+        const callers = single.sync(helpers.createOptions({ limit: 1 }));
 
-        expect(callers).to.be.empty
-      })
-    })
+        expect(callers).to.be.empty;
+      });
+    });
 
     context('and all files are excluded via "filterFiles"', () => {
       it('should return empty array', () => {
-        const callers = single.sync(helpers.createOptions({ filterFiles: () => false }))
+        const callers = single.sync(helpers.createOptions({ filterFiles: () => false }));
 
-        expect(callers).to.be.empty
-      })
-    })
+        expect(callers).to.be.empty;
+      });
+    });
 
     context('and package is excluded via "excludes"', () => {
       it('should return empty array', () => {
-        const callers = single.sync(helpers.createOptions({ excludes: 'single' }))
+        const callers = single.sync(helpers.createOptions({ excludes: 'single' }));
 
-        expect(callers).to.be.empty
-      })
-    })
+        expect(callers).to.be.empty;
+      });
+    });
 
     context('and package is excluded via "filterPackages"', () => {
       it('should return empty array', () => {
-        const callers = single.sync(helpers.createOptions({ filterPackages: (pkg) => pkg.name !== 'single' }))
+        const callers = single.sync(helpers.createOptions({ filterPackages: (pkg) => pkg.name !== 'single' }));
 
-        expect(callers).to.be.empty
-      })
-    })
-  })
-})
+        expect(callers).to.be.empty;
+      });
+    });
+  });
+});

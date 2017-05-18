@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Alasdair Mercer, Skelp
+ * Copyright (C) 2017 Alasdair Mercer, !ninja
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -20,13 +20,13 @@
  * SOFTWARE.
  */
 
-'use strict'
+'use strict';
 
-const foo = require('./foo')
+const foo = require('./foo');
 
 module.exports = function unpackagedFunction(knockknockDirPath, options) {
-  return foo(knockknockDirPath, options)
-}
+  return foo(knockknockDirPath, options);
+};
 module.exports.sync = function unpackagedSyncFunction(knockknockDirPath, options) {
-  return foo.sync(knockknockDirPath, options)
-}
+  return foo.sync(knockknockDirPath, options);
+};

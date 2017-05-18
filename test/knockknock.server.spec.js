@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Alasdair Mercer, Skelp
+ * Copyright (C) 2017 Alasdair Mercer, !ninja
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -20,23 +20,23 @@
  * SOFTWARE.
  */
 
-'use strict'
+'use strict';
 
-const expect = require('chai').expect
-const path = require('path')
+const expect = require('chai').expect;
+const path = require('path');
 
-const helpers = require('./helpers')
-const knockknock = require('../src/knockknock')
-const server = require('./fixtures/server/server')
+const helpers = require('./helpers');
+const knockknock = require('../src/knockknock');
+const server = require('./fixtures/server/server');
 
 describe('knockknock:fixture:server', () => {
   context('when asynchronous', () => {
-    before(() => knockknock.clearCache())
+    before(() => knockknock.clearCache());
 
     it('should return promise for callers (incl. packages) before "knocking" file', () => {
       return server(helpers.createOptions())
         .then((callers) => {
-          expect(callers).to.have.lengthOf(1)
+          expect(callers).to.have.lengthOf(1);
           expect(callers[0]).to.deep.equal(helpers.resolveCallerForFixture({
             column: 10,
             file: 'server/server.js',
@@ -48,24 +48,24 @@ describe('knockknock:fixture:server', () => {
               name: 'server',
               version: '4.0.1'
             }
-          }))
-        })
-    })
+          }));
+        });
+    });
 
     context('and first call is skipped via "offset"', () => {
       it('should return promise for empty array', () => {
         return server(helpers.createOptions({ offset: 1 }))
           .then((callers) => {
-            expect(callers).to.be.empty
-          })
-      })
-    })
+            expect(callers).to.be.empty;
+          });
+      });
+    });
 
     context('and limited to a single caller via "limit"', () => {
       it('should return promise for only caller (excl. package) before "knocking" file', () => {
         return server(helpers.createOptions({ limit: 1 }))
           .then((callers) => {
-            expect(callers).to.have.lengthOf(1)
+            expect(callers).to.have.lengthOf(1);
             expect(callers[0]).to.deep.equal(helpers.resolveCallerForFixture({
               column: 10,
               file: 'server/server.js',
@@ -77,55 +77,55 @@ describe('knockknock:fixture:server', () => {
                 name: 'server',
                 version: '4.0.1'
               }
-            }))
-          })
-      })
-    })
+            }));
+          });
+      });
+    });
 
     context('and file before "knocking" file is excluded via "filterFiles"', () => {
       it('should return promise for empty array', () => {
         return server(helpers.createOptions({ filterFiles: (filePath) => path.basename(filePath) !== 'server.js' }))
           .then((callers) => {
-            expect(callers).to.be.empty
-          })
-      })
-    })
+            expect(callers).to.be.empty;
+          });
+      });
+    });
 
     context('and all files are excluded via "filterFiles"', () => {
       it('should return promise for empty array', () => {
         return server(helpers.createOptions({ filterFiles: () => false }))
           .then((callers) => {
-            expect(callers).to.be.empty
-          })
-      })
-    })
+            expect(callers).to.be.empty;
+          });
+      });
+    });
 
     context('and package is excluded via "excludes"', () => {
       it('should return promise for empty array', () => {
         return server(helpers.createOptions({ excludes: 'server' }))
           .then((callers) => {
-            expect(callers).to.be.empty
-          })
-      })
-    })
+            expect(callers).to.be.empty;
+          });
+      });
+    });
 
     context('and package is excluded via "filterPackages"', () => {
       it('should return promise for empty array', () => {
         return server(helpers.createOptions({ filterPackages: (pkg) => pkg.name !== 'server' }))
           .then((callers) => {
-            expect(callers).to.be.empty
-          })
-      })
-    })
-  })
+            expect(callers).to.be.empty;
+          });
+      });
+    });
+  });
 
   context('when synchronous', () => {
-    before(() => knockknock.clearCache())
+    before(() => knockknock.clearCache());
 
     it('should return callers (incl. packages) before "knocking" file', () => {
-      const callers = server.sync(helpers.createOptions())
+      const callers = server.sync(helpers.createOptions());
 
-      expect(callers).to.have.lengthOf(1)
+      expect(callers).to.have.lengthOf(1);
       expect(callers[0]).to.deep.equal(helpers.resolveCallerForFixture({
         column: 14,
         file: 'server/server.js',
@@ -137,22 +137,22 @@ describe('knockknock:fixture:server', () => {
           name: 'server',
           version: '4.0.1'
         }
-      }))
-    })
+      }));
+    });
 
     context('and first call is skipped via "offset"', () => {
       it('should return promise for empty array', () => {
-        const callers = server.sync(helpers.createOptions({ offset: 1 }))
+        const callers = server.sync(helpers.createOptions({ offset: 1 }));
 
-        expect(callers).to.be.empty
-      })
-    })
+        expect(callers).to.be.empty;
+      });
+    });
 
     context('and limited to a single caller via "limit"', () => {
       it('should return only caller (excl. package) before "knocking" file', () => {
-        const callers = server.sync(helpers.createOptions({ limit: 1 }))
+        const callers = server.sync(helpers.createOptions({ limit: 1 }));
 
-        expect(callers).to.have.lengthOf(1)
+        expect(callers).to.have.lengthOf(1);
         expect(callers[0]).to.deep.equal(helpers.resolveCallerForFixture({
           column: 14,
           file: 'server/server.js',
@@ -164,44 +164,44 @@ describe('knockknock:fixture:server', () => {
             name: 'server',
             version: '4.0.1'
           }
-        }))
-      })
-    })
+        }));
+      });
+    });
 
     context('and file before "knocking" file is excluded via "filterFiles"', () => {
       it('should return empty array', () => {
         const callers = server.sync(helpers.createOptions({
           filterFiles: (filePath) => {
-            return path.basename(filePath) !== 'server.js'
+            return path.basename(filePath) !== 'server.js';
           }
-        }))
+        }));
 
-        expect(callers).to.be.empty
-      })
-    })
+        expect(callers).to.be.empty;
+      });
+    });
 
     context('and all files are excluded via "filterFiles"', () => {
       it('should return empty array', () => {
-        const callers = server.sync(helpers.createOptions({ filterFiles: () => false }))
+        const callers = server.sync(helpers.createOptions({ filterFiles: () => false }));
 
-        expect(callers).to.be.empty
-      })
-    })
+        expect(callers).to.be.empty;
+      });
+    });
 
     context('and package is excluded via "excludes"', () => {
       it('should return empty array', () => {
-        const callers = server.sync(helpers.createOptions({ excludes: 'server' }))
+        const callers = server.sync(helpers.createOptions({ excludes: 'server' }));
 
-        expect(callers).to.be.empty
-      })
-    })
+        expect(callers).to.be.empty;
+      });
+    });
 
     context('and package is excluded via "filterPackages"', () => {
       it('should return empty array', () => {
-        const callers = server.sync(helpers.createOptions({ filterPackages: (pkg) => pkg.name !== 'server' }))
+        const callers = server.sync(helpers.createOptions({ filterPackages: (pkg) => pkg.name !== 'server' }));
 
-        expect(callers).to.be.empty
-      })
-    })
-  })
-})
+        expect(callers).to.be.empty;
+      });
+    });
+  });
+});

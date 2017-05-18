@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Alasdair Mercer, Skelp
+ * Copyright (C) 2017 Alasdair Mercer, !ninja
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -20,21 +20,21 @@
  * SOFTWARE.
  */
 
-'use strict'
+'use strict';
 
-const bar = require('../node_modules/bar/src/bar')
-const foo = require('../node_modules/foo/src/foo')
+const bar = require('../node_modules/bar/src/bar');
+const foo = require('../node_modules/foo/src/foo');
 
 module.exports.bar = function flatBarFunction(options) {
-  return bar(options)
-}
+  return bar(options);
+};
 module.exports.bar.sync = function flatBarSyncFunction(options) {
-  return bar.sync(options)
-}
+  return bar.sync(options);
+};
 
 module.exports.foo = function flatFooFunction(options) {
-  return foo(options)
-}
+  return foo(options);
+};
 module.exports.foo.sync = function flatFooSyncFunction(options) {
-  return foo.sync(options)
-}
+  return foo.sync(options);
+};

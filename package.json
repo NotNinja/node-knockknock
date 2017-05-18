@@ -1,15 +1,15 @@
 {
   "name": "knockknock",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "Who's there? The modules that just called your code",
-  "homepage": "https://github.com/Skelp/node-knockknock",
+  "homepage": "https://github.com/NotNinja/node-knockknock",
   "bugs": {
-    "url": "https://github.com/Skelp/node-knockknock/issues"
+    "url": "https://github.com/NotNinja/node-knockknock/issues"
   },
   "author": {
     "name": "Alasdair Mercer",
-    "email": "alasdair@skelp.io",
-    "url": "https://skelp.io"
+    "email": "mercer.alasdair@gmail.com",
+    "url": "https://not.ninja"
   },
   "license": "MIT",
   "keywords": [
@@ -23,30 +23,30 @@
   ],
   "repository": {
     "type": "git",
-    "url": "https://github.com/Skelp/node-knockknock.git"
+    "url": "https://github.com/NotNinja/node-knockknock.git"
   },
   "dependencies": {
     "callsite": "^1.0.0",
     "debug": "*",
-    "pkg-dir": "^1.0.0"
+    "pkg-dir": "^2.0.0"
   },
   "devDependencies": {
     "chai": "^3.5.0",
-    "coveralls": "^2.11.16",
-    "eslint": "^3.16.0",
-    "eslint-config-skelp": "^0.1.5",
+    "codecov": "^2.2.0",
+    "eslint": "^3.19.0",
+    "eslint-config-notninja": "^0.1.1",
     "istanbul": "^0.4.5",
-    "mocha": "^3.2.0",
+    "mocha": "^3.4.1",
     "ncp": "^2.0.0",
     "tmp": "^0.0.31"
   },
   "main": "src/knockknock.js",
   "scripts": {
-    "report-coverage": "istanbul cover _mocha --report lcovonly -- -R spec \"test/**/*.spec.js\" && coveralls < coverage/lcov.info",
-    "test": "npm run test-lint && npm run test-suite && npm run test-coverage",
-    "test-coverage": "istanbul check-coverage",
-    "test-lint": "eslint \"src/**/*.js\" \"test/**/*.js\"",
-    "test-suite": "istanbul cover _mocha -- -R spec \"test/**/*.spec.js\""
+    "ci": "npm run test",
+    "report-coverage": "istanbul cover _mocha --report lcovonly -- -R list \"test/**/*.spec.js\" && codecov",
+    "pretest": "eslint \"src/**/*.js\" \"test/**/*.js\"",
+    "test": "istanbul cover _mocha -- -R list \"test/**/*.spec.js\"",
+    "posttest": "istanbul check-coverage"
   },
   "engines": {
     "node": ">=4"
