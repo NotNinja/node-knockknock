@@ -471,30 +471,6 @@ module.exports.version = version;
  */
 
 /**
- * Called with path of the file responsible for the current call that is being processed to allow consumers to make a
- * decision on whether the file is to be included.
- *
- * @callback knockknock~FilterFilesCallback
- * @param {string} filePath - the path of the file responsible for the current call being processed
- * @return {boolean} <code>true</code> to include calls originating from <code>filePath</code>; otherwise
- * <code>false</code>.
- */
-
-/**
- * Called with the information for the package containing the file responsible for the current call that is being
- * processed to allow consumers to make a decision on whether files within the specified package are to be included.
- *
- * If the file responsible for the current call being processed does not belong to a package, then the decision returned
- * will apply to <b>all</b> unpackaged files.
- *
- * @callback knockknock~FilterPackagesCallback
- * @param {?knockknock~Package} pkg - the package information for the file responsible for the current call being
- * processed (may be <code>null</code> if no package was found)
- * @return {boolean} <code>true</code> to include calls originating from files within the package (or all unpackaged
- * files, if <code>pkg</code> is <code>null</code>); otherwise <code>false</code>.
- */
-
-/**
  * Called with the installation directory of a package containing the calling file.
  *
  * @callback knockknock~FindPackageDirectoryCallback
