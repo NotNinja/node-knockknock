@@ -14,7 +14,7 @@ The modules that just called your code.
 that were responsible for calling your module.
 
 [![Build](https://img.shields.io/travis/NotNinja/node-knockknock/develop.svg?style=flat-square)](https://travis-ci.org/NotNinja/node-knockknock)
-[![Coverage](https://img.shields.io/coveralls/NotNinja/node-knockknock/develop.svg?style=flat-square)](https://coveralls.io/github/NotNinja/node-knockknock)
+[![Coverage](https://img.shields.io/codecov/c/github/NotNinja/node-knockknock/develop.svg?style=flat-square)](https://codecov.io/gh/NotNinja/node-knockknock)
 [![Dependencies](https://img.shields.io/david/NotNinja/node-knockknock.svg?style=flat-square)](https://david-dm.org/NotNinja/node-knockknock)
 [![Dev Dependencies](https://img.shields.io/david/dev/NotNinja/node-knockknock.svg?style=flat-square)](https://david-dm.org/NotNinja/node-knockknock?type=dev)
 [![License](https://img.shields.io/npm/l/knockknock.svg?style=flat-square)](https://github.com/NotNinja/node-knockknock/blob/master/LICENSE.md)
